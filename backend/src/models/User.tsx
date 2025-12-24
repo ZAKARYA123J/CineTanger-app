@@ -1,5 +1,7 @@
-import sequelize from "sequelize"
+import { sequelize } from "../config/Database.js"
 import { DataTypes } from "sequelize"
+import bcrypt from "bcrypt"
+
 const user = sequelize.define("User", {
     id: {
         type: DataTypes.INTEGER,
@@ -22,5 +24,9 @@ const user = sequelize.define("User", {
     tableName: "User",
     timestamps: true,
 })
-user.beforeUpdate(async(e))
+user.beforeUpdate(async (e: any) => {
+    if (e.changed("password")) {
+        e.password = await bcrypt.hash(e.password, 10)
+    }
+})
 export default user;
