@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./backend
+    container_name: cinetanger
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: Marketer-2025
+      DB_NAME: cinetanger
+    volumes:
+      - ./backend:/app
+        ./backend:/app/node_modules
+
+    command: npm start
+
+  postgres:
+    image: postgres:16
+    container_name: cinetanger_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Marketer-2025
+      POSTGRES_DB: cinetanger
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
