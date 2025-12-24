@@ -1,6 +1,6 @@
 import { sequelize } from "../config/Database.js";
 import { DataType, DataTypes } from "sequelize";
-const movie = sequelize.define("Movie", {
+const theater = sequelize.define("Theater", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -18,4 +18,8 @@ const movie = sequelize.define("Movie", {
         type: DataTypes.INTEGER,
         allowNull: false
     }
+}, {
+    tableName: "Theater",
+    timestamps: true
 })
+export default theater;
