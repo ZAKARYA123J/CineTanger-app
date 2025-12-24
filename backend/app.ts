@@ -1,4 +1,4 @@
-import { sequelize } from "./config/Database.js"
+import { sequelize } from "./src/config/Database.js"
 
 sequelize.sync()
   .then(() => {
