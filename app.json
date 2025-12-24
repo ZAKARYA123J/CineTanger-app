@@ -2,8 +2,11 @@
   "expo": {
     "extra": {
       "eas": {
-        "projectId": "bb119df1-8a71-48fd-b0de-fb2beb7d263e"
+        "projectId": "02966dd0-3278-4f82-af14-ba1c991c22fe"
       }
+    },
+    "android": {
+      "package": "com.zakarai.cinetanger"
     }
   }
 }
