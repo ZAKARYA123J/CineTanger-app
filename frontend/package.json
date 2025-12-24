@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+        "eas-build-install": "pnpm install --no-frozen-lockfile",
     "dev": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
