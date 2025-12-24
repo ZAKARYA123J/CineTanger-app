@@ -7,7 +7,7 @@ const showtime = sequelize.define("Showtime", {
         autoIncrement: true
     },
     MovieId: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: "Movie",
@@ -15,7 +15,7 @@ const showtime = sequelize.define("Showtime", {
         }
     },
     theaterId: {
-        type: DataTypes.TEXT,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: "Theater",
