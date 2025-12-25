@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     "name": "cinetanger",
     "private": true,
     "scripts": {
@@ -16,14 +15,3 @@
         "express": "^5.2.1"
     }
 }
-=======
-  "name": "carmarket",
-  "private": true,
-  "workspaces": ["frontend", "backend"],
-  "scripts": {
-    "start:frontend": "pnpm --filter frontend start",
-    "start:backend": "pnpm --filter backend dev",
-    "start:all": "pnpm run start:backend & pnpm run start:frontend"
-  }
-}
->>>>>>> f7f209c (push your chongement)
