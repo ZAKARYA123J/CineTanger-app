@@ -1,0 +1,33 @@
+import { sequelize } from "../config/Database.js";
+import { DataType, DataTypes } from "sequelize";
+const movie = sequelize.define("Movie", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    photo: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    duration: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    releaseDate: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    genre: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: "Movie",
+    timestamps: true
+})
+export default movie;

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     // File Layout
     "rootDir": "./",
     "outDir": "./dist",
@@ -32,4 +33,12 @@
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", "coverage"]
+=======
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "strict": false
+  }
+>>>>>>> 15e725a36a3a89ec536c3de3b0ee159d790458c3
 }
