@@ -5,32 +5,32 @@ import user from "../models/User.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 const JWT_TOKEN = process.env.JWT_TOKEN;
-export const register = async (req:Request, res:Response) => {
+export const register = async (req: Request, res: Response) => {
     const { name, email, password } = req.body
-    if (!email || !password || !name ) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
+    if (!email || !password || !name) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
     try {
-        const Register = await user.findOne({where:{email}})
+        const Register = await user.findOne({ where: { email } })
         if (Register) {
-            return res.status(409).json({ message: "Email already exists"})
+            return res.status(409).json({ message: "Email already exists" })
         }
-        const create = await user.create({ name, email,password })
+        const create = await user.create({ name, email, password })
         const token = jwt.sign(
-    { id: create.getDataValue("id"), name, email },
-    JWT_TOKEN,
-        { expiresIn: "7d" }
+            { id: create.getDataValue("id"), name, email },
+            JWT_TOKEN,
+            { expiresIn: "7d" }
         )
 
-        return res.status(201).json({message:"register User",token})
-        
+        return res.status(201).json({ message: "register User", token })
+
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ message: " no valide" ,error})
+        return res.status(500).json({ message: " no valide", error })
     }
 }
 
-export const login = async (req:Request, res:Response) => {
+export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {

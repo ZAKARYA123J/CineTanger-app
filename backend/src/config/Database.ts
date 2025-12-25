@@ -13,4 +13,4 @@ export const sequelize = new Sequelize(
         logging: false,
     }
 )
-console.log("Host",process.env.DB_NAME,process.env.DB_HOST,)
+console.log("Host",process.env.DB_NAME,process.env.DB_HOST)
