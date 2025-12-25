@@ -1,30 +1,36 @@
 import dotenv from "dotenv"
 dotenv.config()
+import { Request, Response } from "express"
 import user from "../models/User.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 const JWT_TOKEN = process.env.JWT_TOKEN;
-export const register = async (req:any, res:any) => {
+export const register = async (req:Request, res:Response) => {
     const { name, email, password } = req.body
+    if (!email || !password || !name ) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
     try {
         const Register = await user.findOne({where:{email}})
-        if (!Register) {
-            return res.status(200).json({ message: "register create"})
+        if (Register) {
+            return res.status(409).json({ message: "Email already exists"})
         }
-        const token = jwt.sign({name:name,email:email,password:password},
-            JWT_TOKEN,
-            {expiresIn:"7d"}
+        const create = await user.create({ name, email,password })
+        const token = jwt.sign(
+    { id: create.getDataValue("id"), name, email },
+    JWT_TOKEN,
+        { expiresIn: "7d" }
         )
-        await user.create({ name, email, password })
-        return res.status(201).json({message:"register User",token,Register})
+
+        return res.status(201).json({message:"register User",token})
         
     } catch (error) {
         console.log(error)
-        return res.status(400).json({ message: " no valide" ,error})
+        return res.status(500).json({ message: " no valide" ,error})
     }
 }
 
-export const login = async (req, res) => {
+export const login = async (req:Request, res:Response) => {
     const { email, password } = req.body;
 
     try {
