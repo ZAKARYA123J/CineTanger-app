@@ -1,10 +1,10 @@
-import type { Request, Response} from 'express';
-import { Movies} from '../models/Movie.js';
+import type { Request, Response } from 'express';
+import Movie from '../models/Movie.js';
 
-//get all movies 
-export const getAllMovies = async (req: Request, res: Response): Promise <void>=>{
-  try{
-    const movies = await Movies.findAll({
+// Get all movies 
+export const getAllMovies = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const movies = await Movie.findAll({
       order: [['createdAt', 'DESC']]
     });
     res.status(200).json({
@@ -12,32 +12,33 @@ export const getAllMovies = async (req: Request, res: Response): Promise <void>=
       count: movies.length,
       data: movies
     });
-  }catch (error){
+  } catch (error) {
     console.error('Error fetching movies:', error);
     res.status(500).json({
-     success: false,
-     message: 'Server error while fetching movies',
-     error: error instanceof Error? error.message: 'Unknown error'
+      success: false,
+      message: 'Server error while fetching movies',
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
- //get movie by id 
-  export const getMovieById = async (req : Request, res: Response) : Promise<void>=>{
-    try {
+
+// Get movie by id 
+export const getMovieById = async (req: Request, res: Response): Promise<void> => {
+  try {
     const { id } = req.params;
 
-    const movie = await Movies.findByPk(id);
+    const movieData = await Movie.findByPk(id);
 
-    if (!movie) {
+    if (!movieData) {
       res.status(404).json({
         success: false,
         message: `Movie with ID ${id} not found`
       });
       return;
     }
-     res.status(200).json({
+    res.status(200).json({
       success: true,
-      data: movie
+      data: movieData
     });
   } catch (error) {
     console.error('Error fetching movie:', error);
@@ -47,116 +48,105 @@ export const getAllMovies = async (req: Request, res: Response): Promise <void>=
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-  };
-  //create a new movie
-   export const createMovie = async (req: Request, res: Response): Promise<void> => {
+};
+
+// Create a new movie
+export const createMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       title,
-      synopsis,
       duration,
       genre,
-      director,
       releaseDate,
       posterUrl,
-      trailerUrl,
-      rating,
-      language
     } = req.body;
+
     // Basic validation
-    if (!title || !synopsis || !duration || !genre) {
+    if (!title || !duration || !genre) {
       res.status(400).json({
         success: false,
-        message: 'Fields title, synopsis, duration and genre are required'
+        message: 'Fields title, duration and genre are required'
       });
       return;
     }
-    const movie = await Movies.create({
+
+    const newMovie = await Movie.create({
       title,
-      synopsis,
+      photo: posterUrl || '',
       duration,
-      genre,
-      director,
       releaseDate,
-      posterUrl,
-      trailerUrl,
-      rating,
-      language
+      genre
     });
-      res.status(201).json({
+
+    res.status(201).json({
       success: true,
       message: 'Movie created successfully',
-      data: movie
+      data: newMovie
     });
   } catch (error) {
     console.error('Error creating movie:', error);
-      res.status(500).json({
+    res.status(500).json({
       success: false,
       message: 'Server error while creating movie',
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
-//update a movie 
- export const updateMovie = async (req: Request, res: Response): Promise<void> => {
+
+// Update a movie 
+export const updateMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const {
       title,
-      synopsis,
       duration,
       genre,
-      director,
       releaseDate,
-      posterUrl,
-      trailerUrl,
-      rating,
-      language
+      posterUrl
     } = req.body;
-     const movie = await Movies.findByPk(id);
 
-    if (!movie) {
+    const movieData = await Movie.findByPk(id);
+
+    if (!movieData) {
       res.status(404).json({
         success: false,
         message: `Movie with ID ${id} not found`
       });
       return;
     }
+
     // Update provided fields
-    await movie.update({
-      title: title || movie.title,
-      synopsis: synopsis || movie.synopsis,
-      duration: duration || movie.duration,
-      genre: genre || movie.genre,
-      director: director || movie.director,
-      releaseDate: releaseDate || movie.releaseDate,
-      posterUrl: posterUrl || movie.posterUrl,
-      trailerUrl: trailerUrl || movie.trailerUrl,
-      rating: rating !== undefined ? rating : movie.rating,
-      language: language || movie.language
+    await movieData.update({
+      title: title || movieData.title,
+      duration: duration || movieData.duration,
+      genre: genre || movieData.genre,
+      releaseDate: releaseDate || movieData.releaseDate,
+      photo: posterUrl || movieData.photo
     });
+
     res.status(200).json({
       success: true,
       message: 'Movie updated successfully',
-      data: movie
+      data: movieData
     });
   } catch (error) {
     console.error('Error updating movie:', error);
-       res.status(500).json({
+    res.status(500).json({
       success: false,
       message: 'Server error while updating movie',
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
-//delete a movie
+
+// Delete a movie
 export const deleteMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
-    const movie = await Movies.findByPk(id);
+    const movieData = await Movie.findByPk(id);
 
-    if (!movie) {
+    if (!movieData) {
       res.status(404).json({
         success: false,
         message: `Movie with ID ${id} not found`
@@ -164,7 +154,7 @@ export const deleteMovie = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    await movie.destroy();
+    await movieData.destroy();
 
     res.status(200).json({
       success: true,
@@ -180,4 +170,3 @@ export const deleteMovie = async (req: Request, res: Response): Promise<void> =>
     });
   }
 };
-
