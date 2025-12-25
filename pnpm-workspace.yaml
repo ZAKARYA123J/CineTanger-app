@@ -1,3 +1,8 @@
 packages:
+<<<<<<< HEAD
   - 'backend'
   - 'frontend'
+=======
+  - 'frontend'
+  - 'backend'
+>>>>>>> f7f209c (push your chongement)
