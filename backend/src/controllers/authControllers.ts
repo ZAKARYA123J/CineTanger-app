@@ -8,16 +8,15 @@ export const register = async (req:any, res:any) => {
     const { name, email, password } = req.body
     try {
         const Register = await user.findOne({where:{email}})
-        if (Register) {
-            return res.status(200).json({ message: "login valide"})
+        if (!Register) {
+            return res.status(200).json({ message: "register create"})
         }
-        await user.create({ name, email, password })
         const token = jwt.sign({name:name,email:email,password:password},
             JWT_TOKEN,
             {expiresIn:"7d"}
         )
-        
-        return res.status(201).json({message:"register User",token})
+        await user.create({ name, email, password })
+        return res.status(201).json({message:"register User",token,Register})
         
     } catch (error) {
         console.log(error)
