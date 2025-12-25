@@ -1,0 +1,69 @@
+name: CI/CD - CinéTanger
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+ 
+
+  
+  ci:
+    name: CI - Tests, Lint & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name:  Checkout code
+        uses: actions/checkout@v4
+
+      - name:  Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name:  Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name:  Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name:  Run linting
+        run: pnpm turbo run lint
+
+      - name:  Run tests
+        run: pnpm turbo run test
+
+      - name:  Build projects
+        run: pnpm turbo run build
+
+      - name:  CI passed
+        run: echo " All tests and builds passed!"
+
+  
+  # CD: Continuous Deployment 
+  
+  deploy:
+    name: CD - Deploy to Production
+    runs-on: ubuntu-latest
+    needs: ci  # Only runs if CI passes
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Only on main branch
+
+    steps:
+      - name:  Checkout code
+        uses: actions/checkout@v4
+
+      - name:  Deploy Backend 
+        run: |
+          echo " Deployment would happen here"
+          echo " Target: Render/Railway"
+          echo " Waiting for deployment configuration..."
+          echo " To configure: Add RAILWAY_TOKEN or RENDER_API_KEY to GitHub Secrets"
+
+      - name:  Deployment ready
+        run: echo " CD pipeline configured. Add deployment credentials to activate!"
