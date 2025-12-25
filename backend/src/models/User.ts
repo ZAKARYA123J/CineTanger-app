@@ -28,9 +28,14 @@ const user = sequelize.define("User", {
     tableName: "User",
     timestamps: true,
 })
-user.beforeUpdate(async (e: any) => {
-    if (e.changed("password")) {
-        e.password = await bcrypt.hash(e.password, 10)
+user.beforeCreate(async (instance:any) => {
+    instance.password = await bcrypt.hash(instance.password, 10);
+});
+
+user.beforeUpdate(async (instance:any) => {
+    if (instance.changed("password")) {
+        instance.password = await bcrypt.hash(instance.password, 10);
     }
-})
+});
+
 export default user;
