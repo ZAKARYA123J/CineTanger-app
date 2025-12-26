@@ -1,0 +1,6 @@
+
+> back-end@1.0.0 test C:\Users\HP\OneDrive\Documents\SIMPLON\CineTanger-app\backend
+> echo "Error: no test specified" && exit 1
+
+"Error: no test specified" 
+ ELIFECYCLE  Test failed. See above for more details.

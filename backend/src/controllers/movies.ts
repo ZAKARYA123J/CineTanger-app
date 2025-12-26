@@ -61,15 +61,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       posterUrl,
     } = req.body;
 
-    // Basic validation
-    if (!title || !duration || !genre) {
-      res.status(400).json({
-        success: false,
-        message: 'Fields title, duration and genre are required'
-      });
-      return;
-    }
-
+    // Validation is now handled by express-validator middleware
     const newMovie = await Movie.create({
       title,
       photo: posterUrl || '',
@@ -115,7 +107,7 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Update provided fields
+    // Update provided fields - validation handled by middleware
     await movieData.update({
       title: title || movieData.title,
       duration: duration || movieData.duration,
