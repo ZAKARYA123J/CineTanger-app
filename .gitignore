@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-node_modules
-=======
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
 node_modules/
-
+.env
 # Expo
 .expo/
 dist/
@@ -44,4 +41,3 @@ app-example
 # generated native folders
 /ios
 /android
->>>>>>> 7fa5762 (frist push your porjets)
