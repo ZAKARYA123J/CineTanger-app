@@ -4,7 +4,7 @@ import movie from "../models/Movie.js";
 import theater from "../models/theater.js";
 export const Showtime = async (req: Request, res: Response) => {
     try {
-        const { startTime, price, totalSeats, bookedSeats, MovieId, theaterId } = req.body;
+        const { startTime, price, totalSeats, MovieId, theaterId } = req.body;
         const Movie = await movie.findByPk(MovieId);
         if (!Movie) {
             return res.status(404).json({ message: "Movie not found" });
@@ -14,10 +14,10 @@ export const Showtime = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Theater not found" });
         }
         const newShowtime = await showtime.create({
-            startTime,
+            startTime: startTime,
             price,
             totalSeats,
-            bookedSeats,
+            bookedSeats: 0,
             MovieId,
             theaterId
         });
@@ -32,9 +32,11 @@ export const Showtime = async (req: Request, res: Response) => {
 }
 export const allShowtime = async (req: Request, res: Response) => {
     try {
-        const get = await showtime.findAll()
+        const get = await showtime.findAll({
+            include: [movie, theater]
+        })
         res.status(200).json({ message: "confirme get showtime", get })
     } catch (error) {
-        res.status(400).json({ message: "showtime not found", error })
+        res.status(500).json({ message: "showtime not found", error })
     }
 }

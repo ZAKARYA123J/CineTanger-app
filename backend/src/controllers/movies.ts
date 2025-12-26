@@ -58,7 +58,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       duration,
       genre,
       releaseDate,
-      posterUrl,
+      photo,
     } = req.body;
 
     // Basic validation
@@ -72,7 +72,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
 
     const newMovie = await Movie.create({
       title,
-      photo: posterUrl || '',
+      photo: photo || '',
       duration,
       releaseDate,
       genre
