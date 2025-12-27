@@ -1,6 +1,6 @@
 import { sequelize } from "./src/config/Database.js"
 
-sequelize.sync()
+sequelize.sync({ alter: true })
   .then(() => {
     console.log("✅ Database connected successfully")
   })
