@@ -1,7 +1,5 @@
 import express, { type Request, type Response } from "express"
 import authRouter from "./src/router/authRouter.js"
-import showtimeRouter from "./src/router/showtimeRouter.js"
-import theaterRouter from "./src/router/theaterRouter.js"
 import "./app.js"
 const app = express()
 app.use(express.json());
