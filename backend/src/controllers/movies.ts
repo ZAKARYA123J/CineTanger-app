@@ -58,13 +58,13 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       duration,
       genre,
       releaseDate,
-      photo,
+      posterUrl,  // ← Changed from 'photo' to 'posterUrl'
     } = req.body;
 
     // Validation is now handled by express-validator middleware
     const newMovie = await Movie.create({
       title,
-      photo: photo || '',
+      photo: posterUrl || '',  // ← Map posterUrl to photo field
       duration,
       releaseDate,
       genre
@@ -84,6 +84,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
     });
   }
 };
+
 
 // Update a movie 
 export const updateMovie = async (req: Request, res: Response): Promise<void> => {

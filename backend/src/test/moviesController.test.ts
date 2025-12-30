@@ -17,10 +17,11 @@ describe('Movie Controller', () => {
   let mockResponse: Partial<Response>;
   let statusMock: jest.Mock;
   let jsonMock: jest.Mock;
+let consoleErrorSpy: ReturnType<typeof jest.spyOn>;
 
   beforeEach(() => {
-    
-    jest.clearAllMocks();
+      jest.clearAllMocks();
+consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
 
     // Setup mock response
     statusMock = jest.fn().mockReturnThis();
