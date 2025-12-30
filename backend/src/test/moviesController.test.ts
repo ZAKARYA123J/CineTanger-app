@@ -41,12 +41,13 @@ describe('Movie Controller', () => {
     it('should return all movies successfully', async () => {
       const mockMovies = [
         {
-          id: 1,
-          title: 'Test Movie 1',
-          duration: 120,
-          genre: 'Action',
-          releaseDate: '2024-01-01',
-          photo: 'url1.jpg'
+          id: 1,  
+  title: "Inception",
+  photo: "https://example.com/images/inception.jpg",
+  duration: 148,
+  releaseDate: 2010,
+  genre: "Science Fiction"
+
         },
         {
           id: 2,
