@@ -116,6 +116,7 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       photo: posterUrl || movieData.photo
     });
 
+
     res.status(200).json({
       success: true,
       message: 'Movie updated successfully',

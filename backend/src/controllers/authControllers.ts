@@ -5,6 +5,7 @@ import user from "../models/User.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
+
 const JWT_TOKEN = process.env.JWT_TOKEN;
 export const register = async (req: Request, res: Response) => {
     const { name, email, password } = req.body
@@ -61,10 +62,10 @@ export const login = async (req: Request, res: Response) => {
 
 export const me=async(req:Request,res:Response)=>{
 try{
-const id=req.userId
+const id=req?.user.id
 
-const user=await user.find({where:id})
-if(!user){
+const user2=await user.findOne({where:{id:id}})
+if(!user2){
     res.status(404).send({message:"user not found"})
 }
 
