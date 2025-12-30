@@ -6,7 +6,7 @@ const queryClient = new QueryClient();
 export default function Layout() {
     return (
         <QueryClientProvider client={queryClient}>
-            <Stack>
+            <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Home" options={{ title: "Home" }} />
             </Stack>
         </QueryClientProvider>
