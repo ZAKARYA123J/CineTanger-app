@@ -5,9 +5,11 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch  index.ts",
-    "seeds": "tsx seeds/seeds.ts"
+  
+ 
+    "seeds": "tsx seeds/seeds.ts",
+    "test": "jest",
+    "dev": "nodemon index.ts"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +33,7 @@
     "eslint": "^9.25.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.21.0",
