@@ -5,7 +5,8 @@
         "build": "turbo build",
         "dev": "turbo dev",
         "lint": "turbo lint",
-        "test": "turbo test"
+        "test": "turbo test",
+        "seeds":"node seeds/seeds.ts"
     },
     "devDependencies": {
         "turbo": "latest"

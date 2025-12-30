@@ -58,13 +58,13 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       duration,
       genre,
       releaseDate,
-      posterUrl,
+      photo,
     } = req.body;
 
     // Validation is now handled by express-validator middleware
     const newMovie = await Movie.create({
       title,
-      photo: posterUrl || '',
+      photo: photo || '',
       duration,
       releaseDate,
       genre

@@ -7,7 +7,7 @@ export const handleValidationErrors = (
   next: NextFunction
 ): void => {
   const errors = validationResult(req);
-  
+
   if (!errors.isEmpty()) {
     res.status(400).json({
       success: false,
@@ -19,25 +19,19 @@ export const handleValidationErrors = (
     });
     return;
   }
-  
+
   next();
 };
 
 //validation rules for creating a reservation 
 export const validateCreateReservation = [
-  body('userId')
-    .notEmpty()
-    .withMessage('User ID is required')
-    .isInt({ min: 1 })
-    .withMessage('User ID must be a positive integer'),
-
-    body('showtimeId')
+  body('showtimeId')
     .notEmpty()
     .withMessage('Showtime ID is required')
     .isInt({ min: 1 })
     .withMessage('Showtime ID must be a positive integer'),
 
-     body('numberOfSeats')
+  body('numberOfSeats')
     .notEmpty()
     .withMessage('Number of seats is required')
     .isInt({ min: 1, max: 10 })
@@ -45,6 +39,7 @@ export const validateCreateReservation = [
 
   handleValidationErrors
 ];
+
 //validation for confirmation code param
 export const validateConfirmationCode = [
   param('code')

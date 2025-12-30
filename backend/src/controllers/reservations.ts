@@ -1,16 +1,17 @@
 import type { Request, Response } from "express";
 import reservation from "../models/Reservation.js";
 import showtime from "../models/showtime.js";
-import {calculateAvailableSeats} from "../utils/seatsHelper.js";
+import { calculateAvailableSeats } from "../utils/seatsHelper.js";
 import { generateConfirmationCode } from '../utils/confirmationCodeGenerator.js';
 
 //create a  new reservation 
-export const createReservation = async (req: Request  , res: Response): Promise<void> => {
-    try {
-    const { userId, showtimeId, numberOfSeats } = req.body;
+export const createReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { showtimeId, numberOfSeats } = req.body;
+    const userId = req.user!.id;
     //check if show time exists
-    const show = await  showtime.findByPk(showtimeId);
-    if(!show){
+    const show = await showtime.findByPk(showtimeId);
+    if (!show) {
       res.status(400).json({
         success: false,
         message: 'Showtime not found'
@@ -19,7 +20,7 @@ export const createReservation = async (req: Request  , res: Response): Promise<
     }
     //check if enough seats are available
     const availableSeats = await calculateAvailableSeats(showtimeId);
-    if (availableSeats < numberOfSeats){
+    if (availableSeats < numberOfSeats) {
       res.status(400).json({
         success: false,
         message: `Not enough seats available. only ${availableSeats} seats remaining`
@@ -27,12 +28,12 @@ export const createReservation = async (req: Request  , res: Response): Promise<
       return;
     }
     //generate unique confirmation code
-    const confirmationCode = await generateConfirmationCode ();
+    const confirmationCode = await generateConfirmationCode();
     //calculate total price
-      const pricePerSeat = show.get('price') as number;
+    const pricePerSeat = show.get('price') as number;
     const totalPrice = pricePerSeat * numberOfSeats;
     //create reservation
-     const newReservation = await reservation.create({
+    const newReservation = await reservation.create({
       userId,
       showtimeId,
       numberOfSeats,
@@ -79,7 +80,7 @@ export const getReservationByCode = async (req: Request, res: Response): Promise
       success: true,
       data: reservationData
     });
-     } catch (error) {
+  } catch (error) {
     console.error('Error fetching reservation:', error);
     res.status(500).json({
       success: false,
@@ -89,21 +90,21 @@ export const getReservationByCode = async (req: Request, res: Response): Promise
   }
 };
 //cancel reservation 
-export const cancelReservation = async (req: Request, res: Response): Promise<void>=>{
- try{
-  const { code } = req.params;
-  //find reservation 
-   const reservationData = await reservation.findOne({
+export const cancelReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { code } = req.params;
+    //find reservation 
+    const reservationData = await reservation.findOne({
       where: { confirmationCode: code }
     });
-      if (!reservationData) {
+    if (!reservationData) {
       res.status(404).json({
         success: false,
         message: `Reservation with code ${code} not found`
       });
       return;
     }
-      if (!reservationData) {
+    if (!reservationData) {
       res.status(404).json({
         success: false,
         message: `Reservation with code ${code} not found`
@@ -113,7 +114,7 @@ export const cancelReservation = async (req: Request, res: Response): Promise<vo
     const showtimeId = reservationData.get('showtimeId') as number;
     const numberOfSeats = reservationData.get('numberOfSeats') as number;
     //Release seats back to showtime
-     const show = await showtime.findByPk(showtimeId);
+    const show = await showtime.findByPk(showtimeId);
     if (show) {
       const currentBooked = show.get('bookedSeats') as number;
       await show.update({
@@ -121,7 +122,7 @@ export const cancelReservation = async (req: Request, res: Response): Promise<vo
       });
     }
     //delete reservation
-     await reservationData.destroy();
+    await reservationData.destroy();
 
     res.status(200).json({
       success: true,

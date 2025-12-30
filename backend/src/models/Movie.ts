@@ -19,7 +19,7 @@ const movie = sequelize.define("Movie", {
         allowNull: false
     },
     releaseDate: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
     genre: {

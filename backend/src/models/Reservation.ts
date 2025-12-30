@@ -27,8 +27,9 @@ const reservation = sequelize.define("Reservation", {
         allowNull: false
     },
     confirmationCode: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     totalPrice: {
         type: DataTypes.DECIMAL,
