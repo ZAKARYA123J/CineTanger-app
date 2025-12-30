@@ -4,23 +4,22 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { CinetangerColors } from '@/constants/theme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  // CinéTanger colors
-  const activeColor = '#E50914'; // Cinema red
-  const inactiveColor = '#8E8E93';
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: activeColor,
-        tabBarInactiveTintColor: inactiveColor,
+        tabBarActiveTintColor: CinetangerColors.tabBar.active,
+        tabBarInactiveTintColor: CinetangerColors.tabBar.inactive,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+          backgroundColor: CinetangerColors.tabBar.background[colorScheme ?? 'light'],
+          borderTopColor: CinetangerColors.border[colorScheme ?? 'light'],
+          borderTopWidth: 1,
         },
       }}>
       <Tabs.Screen
