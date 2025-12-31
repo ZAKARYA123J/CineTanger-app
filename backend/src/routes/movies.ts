@@ -8,19 +8,18 @@ import {
 } from '../controllers/movies.js';
 import {
   validateCreateMovie,
-  validateUpdateMovie,
   validateMovieId
 } from '../validation/movieValidation.js';
-const router : any =  express.Router();
+const router: any = express.Router();
 
 //Public routes  View movies
 router.get('/', getAllMovies);
-router.get('/:id', validateMovieId,  getMovieById);
+router.get('/:id', validateMovieId, getMovieById);
 
 //Protected routes - Manage movies (Admin only)
 
-router.post('/',validateCreateMovie,  createMovie);
-router.put('/:id',validateUpdateMovie , updateMovie);
+router.post('/', validateCreateMovie, createMovie);
+router.put('/:id', validateCreateMovie, updateMovie);
 router.delete('/:id', validateMovieId, deleteMovie);
 
 export default router;
