@@ -7,11 +7,15 @@ import {
     TouchableOpacity,
     Image,
     Share,
+    Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getReservationByCode, Reservation } from '../service/reservationStorage';
+import { useMutation } from '@tanstack/react-query';
+import { getReservationByCode, updateReservationStatus, Reservation } from '../service/reservationStorage';
+import { cancelReservation as cancelReservationAPI } from '../service/api';
 
 export default function ReservationDetailsScreen() {
     const { confirmationCode } = useLocalSearchParams<{ confirmationCode: string }>();
@@ -34,6 +38,40 @@ export default function ReservationDetailsScreen() {
         }
     };
 
+    const cancelMutation = useMutation({
+        mutationFn: cancelReservationAPI,
+        onSuccess: async () => {
+            if (reservation) {
+                await updateReservationStatus(reservation.confirmationCode, 'cancelled');
+                await loadReservation();
+                Alert.alert('Success', 'Reservation cancelled successfully');
+            }
+        },
+        onError: (error: any) => {
+            Alert.alert(
+                'Error',
+                error.response?.data?.message || 'Failed to cancel reservation'
+            );
+        },
+    });
+
+    const handleCancel = () => {
+        if (!reservation) return;
+
+        Alert.alert(
+            'Cancel Reservation',
+            'Are you sure you want to cancel this reservation?',
+            [
+                { text: 'No', style: 'cancel' },
+                {
+                    text: 'Yes, Cancel',
+                    style: 'destructive',
+                    onPress: () => cancelMutation.mutate(reservation.confirmationCode),
+                },
+            ]
+        );
+    };
+
     const handleShare = async () => {
         if (!reservation) return;
 
@@ -50,6 +88,7 @@ export default function ReservationDetailsScreen() {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.centerContainer}>
+                    <ActivityIndicator size="large" color="#2563EB" />
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
             </SafeAreaView>
@@ -75,7 +114,6 @@ export default function ReservationDetailsScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Feather name="arrow-left" size={24} color="#fff" />
@@ -87,7 +125,6 @@ export default function ReservationDetailsScreen() {
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
-                {/* Status Badge */}
                 <View
                     style={[
                         styles.statusBanner,
@@ -99,7 +136,6 @@ export default function ReservationDetailsScreen() {
                     </Text>
                 </View>
 
-                {/* Confirmation Code */}
                 <View style={styles.codeSection}>
                     <Text style={styles.codeLabel}>Confirmation Code</Text>
                     <View style={styles.codeBox}>
@@ -107,7 +143,6 @@ export default function ReservationDetailsScreen() {
                     </View>
                 </View>
 
-                {/* Movie Info */}
                 <View style={styles.movieCard}>
                     <Image
                         source={{ uri: reservation.moviePhoto }}
@@ -140,7 +175,6 @@ export default function ReservationDetailsScreen() {
                     </View>
                 </View>
 
-                {/* Price */}
                 <View style={styles.priceCard}>
                     <View style={styles.priceRow}>
                         <Text style={styles.priceLabel}>Total Amount</Text>
@@ -148,13 +182,32 @@ export default function ReservationDetailsScreen() {
                     </View>
                 </View>
 
-                {/* Info */}
                 <View style={styles.infoCard}>
                     <Feather name="info" size={20} color="#2563EB" />
                     <Text style={styles.infoText}>
                         Show this confirmation code at the cinema counter to collect your tickets
                     </Text>
                 </View>
+
+                {reservation.status === 'active' && (
+                    <TouchableOpacity
+                        style={[
+                            styles.cancelButton,
+                            cancelMutation.isPending && styles.cancelButtonDisabled,
+                        ]}
+                        onPress={handleCancel}
+                        disabled={cancelMutation.isPending}
+                    >
+                        {cancelMutation.isPending ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <>
+                                <Feather name="x-circle" size={20} color="#fff" />
+                                <Text style={styles.cancelButtonText}>Cancel Reservation</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
             </ScrollView>
         </SafeAreaView>
     );
@@ -189,6 +242,7 @@ const styles = StyleSheet.create({
     loadingText: {
         color: '#888',
         fontSize: 16,
+        marginTop: 10,
     },
     errorText: {
         color: '#fff',
@@ -308,5 +362,24 @@ const styles = StyleSheet.create({
         color: '#aaa',
         fontSize: 13,
         lineHeight: 20,
+    },
+    cancelButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#d41132',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        borderRadius: 25,
+        gap: 8,
+        marginTop: 20,
+    },
+    cancelButtonDisabled: {
+        opacity: 0.6,
+    },
+    cancelButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });

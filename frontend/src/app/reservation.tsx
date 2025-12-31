@@ -8,16 +8,20 @@ import {
     TouchableOpacity,
     RefreshControl,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, router } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
 import { ReservationCard } from '../../components/reservation/ReservationCard';
 import {
     getAllReservations,
     searchReservations,
+    updateReservationStatus,
     Reservation,
 } from '../../service/reservationStorage';
+import { cancelReservation as cancelReservationAPI } from '../../service/api';
 
 export default function ReservationsScreen() {
     const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -26,15 +30,14 @@ export default function ReservationsScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [activeTab, setActiveTab] = useState<'all' | 'active' | 'cancelled'>('all');
+    const [cancellingCode, setCancellingCode] = useState<string | null>(null);
 
-    // Load reservations when screen is focused
     useFocusEffect(
         useCallback(() => {
             loadReservations();
         }, [])
     );
 
-    // Load all reservations
     const loadReservations = async () => {
         try {
             setIsLoading(true);
@@ -48,33 +51,28 @@ export default function ReservationsScreen() {
         }
     };
 
-    // Refresh reservations
     const handleRefresh = async () => {
         setIsRefreshing(true);
         await loadReservations();
         setIsRefreshing(false);
     };
 
-    // Search reservations
     const handleSearch = async (query: string) => {
         setSearchQuery(query);
 
         if (!query.trim()) {
-            // If search is empty, show all based on active tab
             filterByTab(activeTab, reservations);
             return;
         }
 
         try {
             const results = await searchReservations(query);
-            // Apply tab filter to search results
             filterByTab(activeTab, results);
         } catch (error) {
             console.error('Error searching:', error);
         }
     };
 
-    // Filter by tab
     const filterByTab = (tab: 'all' | 'active' | 'cancelled', data: Reservation[] = reservations) => {
         setActiveTab(tab);
 
@@ -89,7 +87,6 @@ export default function ReservationsScreen() {
         setFilteredReservations(filtered);
     };
 
-    // Handle reservation press - navigate to details
     const handleReservationPress = (reservation: Reservation) => {
         router.push({
             pathname: '/reservationDetails',
@@ -99,13 +96,46 @@ export default function ReservationsScreen() {
         });
     };
 
-    // Handle cancel - will be implemented in Task 4
+    const cancelMutation = useMutation({
+        mutationFn: cancelReservationAPI,
+        onMutate: (confirmationCode) => {
+            setCancellingCode(confirmationCode);
+        },
+        onSuccess: async (data, confirmationCode) => {
+            await updateReservationStatus(confirmationCode, 'cancelled');
+            await loadReservations();
+            setCancellingCode(null);
+            Alert.alert('Success', 'Reservation cancelled successfully');
+        },
+        onError: (error: any) => {
+            setCancellingCode(null);
+            Alert.alert(
+                'Error',
+                error.response?.data?.message || 'Failed to cancel reservation'
+            );
+        },
+    });
+
     const handleCancelReservation = (reservation: Reservation) => {
-        // Placeholder - will implement in next task
-        console.log('Cancel reservation:', reservation.confirmationCode);
+        Alert.alert(
+            'Cancel Reservation',
+            `Are you sure you want to cancel your reservation for "${reservation.movieTitle}"?\n\nCode: ${reservation.confirmationCode}`,
+            [
+                {
+                    text: 'No, Keep it',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Yes, Cancel',
+                    style: 'destructive',
+                    onPress: () => {
+                        cancelMutation.mutate(reservation.confirmationCode);
+                    },
+                },
+            ]
+        );
     };
 
-    // Clear search
     const clearSearch = () => {
         setSearchQuery('');
         filterByTab(activeTab, reservations);
@@ -113,7 +143,6 @@ export default function ReservationsScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>My Reservations</Text>
                 <TouchableOpacity onPress={handleRefresh}>
@@ -121,7 +150,6 @@ export default function ReservationsScreen() {
                 </TouchableOpacity>
             </View>
 
-            {/* Search Bar */}
             <View style={styles.searchSection}>
                 <View style={styles.searchBar}>
                     <Feather name="search" size={18} color="#888" />
@@ -140,7 +168,6 @@ export default function ReservationsScreen() {
                 </View>
             </View>
 
-            {/* Filter Tabs */}
             <View style={styles.tabsContainer}>
                 <TouchableOpacity
                     style={[styles.tab, activeTab === 'all' && styles.tabActive]}
@@ -170,7 +197,6 @@ export default function ReservationsScreen() {
                 </TouchableOpacity>
             </View>
 
-            {/* Reservations List */}
             {isLoading ? (
                 <View style={styles.centerContainer}>
                     <ActivityIndicator size="large" color="#2563EB" />
@@ -185,6 +211,7 @@ export default function ReservationsScreen() {
                             reservation={item}
                             onPress={() => handleReservationPress(item)}
                             onCancel={() => handleCancelReservation(item)}
+                            isLoading={cancellingCode === item.confirmationCode}
                         />
                     )}
                     contentContainerStyle={styles.listContent}
