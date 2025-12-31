@@ -30,7 +30,7 @@ export default function SeatSelectionScreen() {
     const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
     // Real-time availability check for selected showtime
-    const { data: availabilityData, refetch: refetchAvailability } = useQuery({
+    const { data: availabilityData } = useQuery({
         queryKey: ['availability', params.showtimeId],
         queryFn: () => checkSeatAvailability(parseInt(params.showtimeId), 1),
         refetchInterval: 5000, // Check every 5 seconds
@@ -50,12 +50,15 @@ export default function SeatSelectionScreen() {
                 pathname: '/confirmation',
                 params: {
                     confirmationCode: data.data.confirmationCode,
+                    movieId: params.movieId,
                     movieTitle: params.movieTitle,
                     moviePhoto: params.moviePhoto,
                     hallName: params.hallName,
                     time: params.time,
+                    date: new Date().toISOString().split('T')[0],
                     numberOfSeats: numberOfSeats.toString(),
                     totalPrice: (totalPrice + 2).toFixed(2),
+                    showtimeId: params.showtimeId,
                 },
             });
         },
