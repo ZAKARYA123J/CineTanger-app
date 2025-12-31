@@ -8,7 +8,7 @@ import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useState } from "react";
-
+import { router } from "expo-router";
 interface Movie {
   id: number;
   title: string;
@@ -28,7 +28,7 @@ export default function Film() {
     queryKey: ["movies"],
     queryFn: getMovie,
   });
-
+  console.log(data)
   const [search, setSearch] = useState("");
 
   if (!fontsLoaded || isLoading) {
@@ -47,35 +47,46 @@ export default function Film() {
     );
   }
 
-  const movies = data.data;
+  const movies = data?.data ?? [];
   const filteredMovies = movies.filter((movie: Movie) =>
     movie.title.toLowerCase().includes(search.toLowerCase()) ||
     movie.genre.toLowerCase().includes(search.toLowerCase())
   );
 
-  const MovieCard = ({ item }: { item: Movie }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: item.photo }} style={styles.image} />
-      <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-      <View style={styles.genreBadge}>
-        <Text style={styles.genreText} numberOfLines={1}>{item.genre}</Text>
-      </View>
-      <View style={styles.infoRow}>
-        <View style={styles.infoItem}>
-          <Feather name="calendar" size={12} color="#888" />
-          <Text style={styles.infoText}>{item.releaseDate}</Text>
+  const MovieCard = ({ item }: { item: Movie }) => {
+    return (
+      <View style={styles.card}>
+        <Image source={{ uri: item.photo }} style={styles.image} />
+        <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+        <View style={styles.genreBadge}>
+          <Text style={styles.genreText} numberOfLines={1}>{item.genre}</Text>
         </View>
-        <View style={styles.infoItem}>
-          <Feather name="clock" size={12} color="#888" />
-          <Text style={styles.infoText}>{item.duration}m</Text>
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <Feather name="calendar" size={12} color="#888" />
+            <Text style={styles.infoText}>{item.releaseDate}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Feather name="clock" size={12} color="#888" />
+            <Text style={styles.infoText}>{item.duration}m</Text>
+          </View>
         </View>
+        <TouchableOpacity
+          style={styles.bookBtn}
+          onPress={() =>
+            router.push({
+              pathname: "/filmDetails",
+              params: { id: item.id.toString() },
+            })
+          }
+        >
+          <FontAwesome6 name="ticket" size={18} color="#fff" />
+          <Text style={styles.bookText}>Book Now</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.bookBtn}>
-        <FontAwesome6 name="ticket" size={18} color="#fff" style={{ marginRight: 8 }} />
-        <Text style={styles.bookText}>Book Now</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    )
+  };
+  console.log(TouchableOpacity);
 
   return (
     <SafeAreaView style={styles.safe}>
