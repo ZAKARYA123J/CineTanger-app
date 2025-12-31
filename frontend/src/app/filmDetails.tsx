@@ -1,9 +1,12 @@
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { getMovieById } from "../service/api";
 import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
+import { LinearGradient } from 'expo-linear-gradient';
+
+const { width } = Dimensions.get('window');
 
 export default function MovieDetails() {
     const [fontsLoaded] = useFonts({
@@ -21,24 +24,18 @@ export default function MovieDetails() {
 
     if (isLoading) {
         return (
-            <View style={styles.container}>
+            <View style={styles.loadingContainer}>
+                <Feather name="film" size={50} color="#d41132" />
                 <Text style={styles.loadingText}>Loading...</Text>
             </View>
         );
     }
 
-    if (error) {
+    if (error || !data) {
         return (
-            <View style={styles.container}>
+            <View style={styles.loadingContainer}>
+                <Feather name="alert-circle" size={50} color="#d41132" />
                 <Text style={styles.errorText}>Error loading movie</Text>
-            </View>
-        );
-    }
-
-    if (!data) {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.errorText}>No movie data available</Text>
             </View>
         );
     }
@@ -47,84 +44,110 @@ export default function MovieDetails() {
     const showtimes = data.showtimes || [];
 
     return (
-        <ScrollView style={styles.container}>
-            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-                <Feather name="arrow-left" size={24} color="#fff" />
-            </TouchableOpacity>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <View style={styles.headerContainer}>
+                {movieInfo.photo && (
+                    <>
+                        <Image
+                            source={{ uri: movieInfo.photo }}
+                            style={styles.posterImage}
+                            resizeMode="cover"
+                        />
+                        <LinearGradient
+                            colors={['transparent', 'rgba(18,18,18,0.8)', '#121212']}
+                            style={styles.gradient}
+                        />
+                    </>
+                )}
 
-            {movieInfo.photo && (
-                <Image
-                    source={{ uri: movieInfo.photo }}
-                    style={styles.image}
-                    resizeMode="cover"
-                />
-            )}
-            <View style={{ width: "95%", flex: 1 }}>
+                <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+                    <Feather name="arrow-left" size={24} color="#fff" />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.movieInfoCard}>
+                <Text style={styles.title}>{movieInfo.title || "Unknown Title"}</Text>
 
-                <View style={styles.content}>
-                    <Text style={styles.title}>{movieInfo.title || "Unknown Title"}</Text>
-
-                    {movieInfo.genre && (
-                        <View style={styles.badge}>
-                            <Text style={styles.genre}>{movieInfo.genre}</Text>
+                {movieInfo.genre && (
+                    <View style={styles.genreContainer}>
+                        <View style={styles.genreBadge}>
+                            <Feather name="film" size={14} color="#d41132" />
+                            <Text style={styles.genreText}>{movieInfo.genre}</Text>
                         </View>
-                    )}
-
-                    <View style={styles.row}>
-                        <Feather name="calendar" size={16} color="#aaa" />
-                        <Text style={styles.text}>{movieInfo.releaseDate || "N/A"}</Text>
                     </View>
-
-                    <View style={styles.row}>
-                        <Feather name="clock" size={16} color="#aaa" />
-                        <Text style={styles.text}>{movieInfo.duration || "N/A"} minutes</Text>
+                )}
+                <View style={styles.metaContainer}>
+                    <View style={styles.metaItem}>
+                        <Feather name="calendar" size={18} color="#d41132" />
+                        <Text style={styles.metaText}>{movieInfo.releaseDate || "N/A"}</Text>
                     </View>
-                    <View>
+                    <View style={styles.metaDivider} />
+                    <View style={styles.metaItem}>
+                        <Feather name="clock" size={18} color="#d41132" />
+                        <Text style={styles.metaText}>{movieInfo.duration || "N/A"} min</Text>
+                    </View>
+                </View>
+                {movieInfo.description && (
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.sectionTitle}>
+                            <Feather name="align-left" size={20} color="#fff" /> Synopsis
+                        </Text>
                         <Text style={styles.description}>{movieInfo.description}</Text>
                     </View>
-                    {movieInfo.artist && (
-                        <View style={styles.castSection}>
-                            <Text style={styles.castTitle}>Cast</Text>
-                            <ScrollView
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={styles.castList}
-                            >
-                                {movieInfo.artist.split(',').map((photo: string, index: number) => (
-                                    <View key={index} style={styles.castItem}>
+                )}
+                {movieInfo.artist && (
+                    <View style={styles.castSection}>
+                        <Text style={styles.sectionTitle}>
+                            <Feather name="users" size={20} color="#fff" /> Cast
+                        </Text>
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.castList}
+                        >
+                            {movieInfo.artist.split(',').map((photo: string, index: number) => (
+                                <View key={index} style={styles.castItem}>
+                                    <View style={styles.castPhotoContainer}>
                                         <Image
                                             source={{ uri: photo.trim() }}
                                             style={styles.castPhoto}
                                         />
+                                        <View style={styles.castGlow} />
                                     </View>
-                                ))}
-                            </ScrollView>
-                        </View>
-                    )}
-                    <View style={styles.showtimesSection}>
-                        <Text style={styles.sectionTitle}>Showtimes by Theater</Text>
+                                </View>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
+                <View style={styles.showtimesSection}>
+                    <Text style={styles.sectionTitle}>
+                        <Feather name="map-pin" size={20} color="#fff" /> Available Theaters
+                    </Text>
 
-                        {showtimes.length > 0 ? (
-                            showtimes.map((showtime: any) => {
-                                const availableSeats = showtime.totalSeats - showtime.bookedSeats;
+                    {showtimes.length > 0 ? (
+                        showtimes.map((showtime: any) => {
+                            const availableSeats = showtime.totalSeats - showtime.bookedSeats;
+                            const fillPercentage = (showtime.bookedSeats / showtime.totalSeats) * 100;
 
-                                return (
-                                    <View key={showtime.id} style={styles.showtimeCard}>
-                                        <View style={styles.theaterInfo}>
+                            return (
+                                <View key={showtime.id} style={styles.showtimeCard}>
+                                    <View style={styles.theaterHeader}>
+                                        <View style={styles.theaterIconContainer}>
                                             <Feather name="map-pin" size={20} color="#d41132" />
-                                            <View style={{ flex: 1 }}>
-                                                <Text style={styles.theaterName}>
-                                                    {showtime.theater?.title || "Unknown Theater"}
-                                                </Text>
-                                                {showtime.theater?.name && (
-                                                    <Text style={styles.theaterLocation}>
-                                                        {showtime.theater.name}
-                                                    </Text>
-                                                )}
-                                            </View>
                                         </View>
-                                        <View style={styles.showtimeDetails}>
-                                            <View style={styles.timeRow}>
+                                        <View style={styles.theaterInfo}>
+                                            <Text style={styles.theaterName}>
+                                                {showtime.theater?.title || "Unknown Theater"}
+                                            </Text>
+                                            {showtime.theater?.name && (
+                                                <Text style={styles.theaterLocation}>
+                                                    <Feather name="navigation" size={12} color="#888" /> {showtime.theater.name}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    </View>
+                                    <View style={styles.showtimeContent}>
+                                        <View style={styles.timeContainer}>
+                                            <View style={styles.timeBox}>
                                                 <Feather name="clock" size={16} color="#4ade80" />
                                                 <Text style={styles.timeText}>
                                                     {new Date(showtime.startTime).toLocaleTimeString('en-US', {
@@ -134,36 +157,51 @@ export default function MovieDetails() {
                                                     })}
                                                 </Text>
                                             </View>
-
-                                            <View style={styles.priceRow}>
+                                        </View>
+                                        <View style={styles.seatsProgressContainer}>
+                                            <View style={styles.seatsProgressBar}>
+                                                <View
+                                                    style={[
+                                                        styles.seatsProgressFill,
+                                                        { width: `${fillPercentage}%` }
+                                                    ]}
+                                                />
+                                            </View>
+                                            <Text style={styles.seatsText}>
+                                                {availableSeats} / {showtime.totalSeats} seats available
+                                            </Text>
+                                        </View>
+                                        <View style={styles.bookingContainer}>
+                                            <View style={styles.priceContainer}>
+                                                <Text style={styles.priceLabel}>Price</Text>
                                                 <Text style={styles.price}>{showtime.price} DH</Text>
-                                                <Text style={styles.seatsAvailable}>
-                                                    {availableSeats} seats available
-                                                </Text>
                                             </View>
 
                                             <TouchableOpacity
                                                 style={[
-                                                    styles.selectBtn,
-                                                    availableSeats === 0 && styles.selectBtnDisabled
+                                                    styles.bookBtn,
+                                                    availableSeats === 0 && styles.bookBtnDisabled
                                                 ]}
                                                 disabled={availableSeats === 0}
                                             >
-                                                <Text style={styles.selectText}>
-                                                    {availableSeats === 0 ? "Sold Out" : "Select Seats"}
+                                                <Text style={styles.bookText}>
+                                                    {availableSeats === 0 ? "Sold Out" : "Book Now"}
                                                 </Text>
+                                                {availableSeats > 0 && (
+                                                    <Feather name="arrow-right" size={18} color="#fff" />
+                                                )}
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                );
-                            })
-                        ) : (
-                            <View style={styles.emptyContainer}>
-                                <Feather name="calendar" size={50} color="#444" />
-                                <Text style={styles.emptyText}>No showtimes available</Text>
-                            </View>
-                        )}
-                    </View>
+                                </View>
+                            );
+                        })
+                    ) : (
+                        <View style={styles.emptyContainer}>
+                            <Feather name="calendar" size={60} color="#444" />
+                            <Text style={styles.emptyText}>No showtimes available</Text>
+                        </View>
+                    )}
                 </View>
             </View>
         </ScrollView>
@@ -173,110 +211,129 @@ export default function MovieDetails() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#0a0a0a",
+    },
+
+    loadingContainer: {
+        flex: 1,
         backgroundColor: "#121212",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 15,
     },
-    artist: {
-        width: "80%",
-        height: 200,
-    },
+
     loadingText: {
         color: "#fff",
         fontSize: 16,
-        textAlign: "center",
-        marginTop: 100,
-    },
-    castSection: {
-        marginTop: 15,
-        marginBottom: 15,
-    },
-
-    castTitle: {
         fontFamily: "Knewave_400Regular",
-        fontSize: 18,
-        color: "#fff",
-        marginBottom: 12,
     },
 
-    castList: {
-        gap: 12,
-        paddingRight: 20,
-    },
-
-    castItem: {
-        alignItems: "center",
-    },
-
-    castPhoto: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 2,
-        borderColor: "#d41132",
-        backgroundColor: "#1a1a1a",
-    },
     errorText: {
         color: "#fff",
         fontSize: 16,
-        textAlign: "center",
-        marginTop: 100,
+        fontFamily: "Knewave_400Regular",
     },
 
-    image: {
+    headerContainer: {
+        position: "relative",
+        height: 450,
+    },
+
+    posterImage: {
         width: "100%",
-        height: 350,
+        height: "100%",
+    },
+
+    gradient: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 200,
     },
 
     backBtn: {
         position: "absolute",
         top: 50,
         left: 20,
-        backgroundColor: "rgba(0,0,0,0.6)",
-        padding: 10,
-        borderRadius: 20,
-        zIndex: 10,
+        backgroundColor: "rgba(0,0,0,0.7)",
+        padding: 12,
+        borderRadius: 25,
+        backdropFilter: "blur(10px)",
     },
 
-    content: {
-        padding: 20,
+    movieInfoCard: {
+        backgroundColor: "#121212",
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        marginTop: -30,
+        paddingHorizontal: 20,
+        paddingTop: 25,
+        paddingBottom: 30,
     },
 
     title: {
-        fontSize: 26,
+        fontSize: 28,
         fontWeight: "bold",
         color: "#fff",
-        marginBottom: 10,
+        marginBottom: 12,
+        fontFamily: "Knewave_400Regular",
     },
 
-    badge: {
-        alignSelf: "flex-start",
-        backgroundColor: "#d41132",
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 20,
-        marginBottom: 10,
+    genreContainer: {
+        marginBottom: 15,
     },
 
-    genre: {
-        color: "#fff",
-        fontWeight: "bold",
-        fontSize: 12,
-    },
-
-    row: {
+    genreBadge: {
         flexDirection: "row",
         alignItems: "center",
         gap: 6,
-        marginBottom: 6,
+        backgroundColor: "rgba(212, 17, 50, 0.15)",
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "#d41132",
+        alignSelf: "flex-start",
     },
 
-    text: {
-        color: "#aaa",
-        lineHeight: 20,
+    genreText: {
+        color: "#d41132",
+        fontWeight: "bold",
+        fontSize: 13,
     },
 
-    showtimesSection: {
-        marginTop: 30,
+    metaContainer: {
+        flexDirection: "row",
         alignItems: "center",
+        backgroundColor: "#1a1a1a",
+        padding: 15,
+        borderRadius: 15,
+        marginBottom: 20,
+    },
+
+    metaItem: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+
+    metaDivider: {
+        width: 1,
+        height: 20,
+        backgroundColor: "#333",
+        marginHorizontal: 10,
+    },
+
+    metaText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "600",
+    },
+
+    descriptionContainer: {
+        marginBottom: 25,
     },
 
     sectionTitle: {
@@ -284,105 +341,223 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#fff",
         marginBottom: 15,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+
+    description: {
+        color: "#aaa",
+        lineHeight: 24,
+        fontSize: 14,
+        fontFamily: "Alkatra-Regular",
+    },
+
+    castSection: {
+        marginBottom: 25,
+    },
+
+    castList: {
+        gap: 15,
+        paddingRight: 20,
+    },
+
+    castItem: {
+        alignItems: "center",
+    },
+
+    castPhotoContainer: {
+        position: "relative",
+    },
+
+    castPhoto: {
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        borderWidth: 3,
+        borderColor: "#d41132",
+    },
+
+    castGlow: {
+        position: "absolute",
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        backgroundColor: "#d41132",
+        opacity: 0.2,
+        top: 0,
+        left: 0,
+    },
+
+    showtimesSection: {
+        marginTop: 10,
     },
 
     showtimeCard: {
         backgroundColor: "#1a1a1a",
-        borderRadius: 12,
-        padding: 15,
-        marginBottom: 12,
+        borderRadius: 20,
+        padding: 18,
+        marginBottom: 15,
         borderWidth: 1,
         borderColor: "#2a2a2a",
-        width: "100%"
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 5,
     },
 
-    theaterInfo: {
+    theaterHeader: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 10,
-        marginBottom: 12,
-        paddingBottom: 12,
+        marginBottom: 15,
+        paddingBottom: 15,
         borderBottomWidth: 1,
         borderBottomColor: "#2a2a2a",
     },
 
+    theaterIconContainer: {
+        width: 45,
+        height: 45,
+        borderRadius: 22.5,
+        backgroundColor: "rgba(212, 17, 50, 0.15)",
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 12,
+    },
+
+    theaterInfo: {
+        flex: 1,
+    },
+
     theaterName: {
         color: "#fff",
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: "bold",
+        marginBottom: 4,
     },
 
     theaterLocation: {
         color: "#888",
         fontSize: 13,
-        marginTop: 2,
-    },
-
-    showtimeDetails: {
-        gap: 8,
-    },
-
-    timeRow: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 6,
+        gap: 4,
+    },
+
+    showtimeContent: {
+        gap: 15,
+    },
+
+    timeContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 10,
+    },
+
+    timeBox: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        backgroundColor: "rgba(74, 222, 128, 0.1)",
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "rgba(74, 222, 128, 0.3)",
     },
 
     timeText: {
-        color: "#fff",
-        fontSize: 15,
-        fontWeight: "600",
+        color: "#4ade80",
+        fontSize: 16,
+        fontWeight: "700",
     },
 
-    priceRow: {
+    seatsProgressContainer: {
+        gap: 8,
+    },
+
+    seatsProgressBar: {
+        height: 8,
+        backgroundColor: "#2a2a2a",
+        borderRadius: 10,
+        overflow: "hidden",
+    },
+
+    seatsProgressFill: {
+        height: "100%",
+        backgroundColor: "#d41132",
+        borderRadius: 10,
+    },
+
+    seatsText: {
+        color: "#aaa",
+        fontSize: 13,
+    },
+
+    bookingContainer: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
+        justifyContent: "space-between",
+        gap: 15,
+    },
+
+    priceContainer: {
+        gap: 4,
+    },
+
+    priceLabel: {
+        color: "#888",
+        fontSize: 12,
+        textTransform: "uppercase",
+        letterSpacing: 1,
     },
 
     price: {
         color: "#4ade80",
-        fontSize: 18,
+        fontSize: 24,
         fontWeight: "bold",
     },
 
-    seatsAvailable: {
-        color: "#aaa",
-        fontSize: 12,
-    },
-
-    selectBtn: {
-        backgroundColor: "#d41132",
-        padding: 12,
-        borderRadius: 8,
+    bookBtn: {
+        flex: 1,
+        flexDirection: "row",
         alignItems: "center",
-        marginTop: 4,
+        justifyContent: "center",
+        gap: 8,
+        backgroundColor: "#d41132",
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        borderRadius: 15,
+        shadowColor: "#d41132",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 5,
     },
 
-    selectBtnDisabled: {
+    bookBtnDisabled: {
         backgroundColor: "#555",
+        shadowOpacity: 0,
     },
 
-    selectText: {
+    bookText: {
         color: "#fff",
         fontWeight: "bold",
-        fontSize: 14,
+        fontSize: 15,
+        fontFamily: "Knewave_400Regular",
     },
 
     emptyContainer: {
         justifyContent: "center",
         alignItems: "center",
         paddingVertical: 60,
+        gap: 15,
     },
 
     emptyText: {
         color: "#666",
         fontSize: 16,
-        marginTop: 10,
+        fontFamily: "Alkatra-Regular",
     },
-    description: {
-        fontFamily: "Knewave_400Regular",
-        color: "white",
-        width: "100%"
-    }
 });
