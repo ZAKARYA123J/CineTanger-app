@@ -43,7 +43,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       const mockMovies = [
         {
           id: 1,  
-  title: "Inception",
+          title: "Inception",
   photo: "https://example.com/images/inception.jpg",
   duration: 148,
   releaseDate: 2010,
