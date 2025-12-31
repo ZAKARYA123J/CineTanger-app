@@ -10,13 +10,8 @@ const validationMiddlewares = async (req: any, res: Response, next: any) => {
             return res.status(400).json({ message: "no token" })
         }
         const valideToken = authheader.split("Bearer ")[1]
-<<<<<<< HEAD
         if (!valideToken) {
             return res.status(401).json({ message: "Invalid token format" })
-=======
-        if(!valideToken){
-            return res.status(401).json({message:"Invalid token format"})
->>>>>>> 19887d5 (change)
         }
         const valid = jwt.verify(valideToken, JWT_TOKEN)
         req.user = valid;

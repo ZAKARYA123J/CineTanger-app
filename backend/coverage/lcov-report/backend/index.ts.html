@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for models/Movie.ts</title>
+    <title>Code coverage report for backend/index.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,20 +19,20 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> Movie.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">backend</a> index.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">82.6% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/33</span>
+                <span class='fraction'>38/46</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">82.6% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>33/33</span>
+                <span class='fraction'>38/46</span>
             </div>
         
             
@@ -95,7 +95,20 @@
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -119,54 +132,80 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { sequelize } from "../config/Database.js";
-import { DataType, DataTypes } from "sequelize";
-const movie = sequelize.define("Movie", {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    photo: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
-    duration: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    releaseDate: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-    genre: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-}, {
-    tableName: "movies",
-    timestamps: true
-})
-export default movie;</pre></td></tr></table></pre>
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import express, { type Request, type Response } from "express"
+import authRouter from "./src/router/authRouter.js"
+import "./app.js"
+import theaterRouter from "./src/router/theaterRouter.js";
+import showtimeRouter from "./src/router/showtimeRouter.js";
+import reservations from "./src/routes/reservations.js";
+import movieRouter from "./src/routes/movies.js"
+import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
+&nbsp;
+export const app = express()
+app.use(express.json())
+&nbsp;
+&nbsp;
+// Error handler (should be last)
+&nbsp;
+&nbsp;
+app.use(express.json());
+app.use("/api/auth", authRouter)
+app.use("/api/timers", showtimeRouter)
+app.use("/api/theaters", theaterRouter)
+app.use("/api/reservations", reservations)
+app.use("/api/movies", movieRouter)
+// Add this before your routes
+app.use((req, res, next) =&gt; {
+<span class="cstat-no" title="statement not covered" >  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);</span>
+<span class="cstat-no" title="statement not covered" >  next();</span>
+});
+app.use(notFound)
+app.use(errorHandler)
+// Add this after your routes to see if requests complete
+app.use((req, res, next) =&gt; {
+<span class="cstat-no" title="statement not covered" >  res.on('finish', () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${res.statusCode}`);</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
+<span class="cstat-no" title="statement not covered" >  next();</span>
+});
+app.get('/', (_req: Request, res: Response) =&gt; {
+<span class="cstat-no" title="statement not covered" >    res.send("hello word")</span>
+<span class="cstat-no" title="statement not covered" >})</span>
+&nbsp;
+&nbsp;
+const PORT = 3000
+&nbsp;
+app.listen(PORT, () =&gt; {
+    console.log(`Server running on http://localhost:${PORT}`)
+})</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-31T14:11:32.588Z
+                at 2025-12-31T14:17:14.591Z
             </div>
         <script src="../prettify.js"></script>
         <script>

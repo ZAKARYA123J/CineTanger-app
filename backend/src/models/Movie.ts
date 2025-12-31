@@ -27,7 +27,7 @@ const movie = sequelize.define("Movie", {
         allowNull: false
     }
 }, {
-    tableName: "Movie",
+    tableName: "movies",
     timestamps: true
 })
 export default movie;

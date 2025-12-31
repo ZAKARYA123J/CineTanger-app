@@ -7,18 +7,40 @@ import reservations from "./src/routes/reservations.js";
 import movieRouter from "./src/routes/movies.js"
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
 
+export const app = express()
+app.use(express.json())
 
-import "./app.js"
-const app = express()
+
+// Error handler (should be last)
+
+
 app.use(express.json());
 app.use("/api/auth", authRouter)
-app.use("/api/auth", showtimeRouter)
-app.use("/api/auth", theaterRouter)
-app.use("/api/auth", reservations)
+app.use("/api/timers", showtimeRouter)
+app.use("/api/theaters", theaterRouter)
+app.use("/api/reservations", reservations)
+app.use("/api/movies", movieRouter)
+// Add this before your routes
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+app.use(notFound)
+app.use(errorHandler)
+// Add this after your routes to see if requests complete
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${res.statusCode}`);
+  });
+  next();
+});
 app.get('/', (_req: Request, res: Response) => {
     res.send("hello word")
 })
+
+
 const PORT = 3000
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)
 })

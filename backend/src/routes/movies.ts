@@ -19,7 +19,7 @@ router.get('/:id', validateMovieId,  getMovieById);
 
 //Protected routes - Manage movies (Admin only)
 
-router.post('/',validateCreateMovie,  createMovie);
+router.post('/',  createMovie);
 router.put('/:id',validateUpdateMovie , updateMovie);
 router.delete('/:id', validateMovieId, deleteMovie);
 

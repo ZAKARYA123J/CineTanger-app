@@ -21,11 +21,15 @@ const user = sequelize.define("User", {
         allowNull: false
     },
     role: {
-        type: DataTypes.ENUM("User", "Admin"),
+        type: DataTypes.STRING,
+        allowNull:false,
+         validate: {
+      isIn: [['Admin', 'User']] // Add validation instead of ENUM
+    },
         defaultValue: "User"
     }
 }, {
-    tableName: "User",
+    tableName: "users",
     timestamps: true,
 })
 user.beforeCreate(async (instance:any) => {
