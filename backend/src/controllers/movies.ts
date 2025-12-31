@@ -99,7 +99,7 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       posterUrl
     } = req.body;
 
-    const movieData = await Movie.findByPk(id);
+    const movieData = await Movie.findByPk(id) as any;
 
     if (!movieData) {
       res.status(404).json({

@@ -3,8 +3,8 @@ import authRouter from "./src/router/authRouter.js"
 import "./app.js"
 import theaterRouter from "./src/router/theaterRouter.js";
 import showtimeRouter from "./src/router/showtimeRouter.js";
-import reservations from "./src/routes/reservations.js";
-import movieRouter from "./src/routes/movies.js"
+import reservations from "./src/router/reservations.js";
+import movieRouter from "./src/router/movies.js"
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
 
 export const app = express()

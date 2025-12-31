@@ -41,7 +41,7 @@ const showtime = sequelize.define("Showtime", {
         allowNull: false
     },
 }, {
-    tableName: "Showtime",
+    tableName: "showtimes",
     timestamps: true
 })
 showtime.belongsTo(movie, { foreignKey: "MovieId" });

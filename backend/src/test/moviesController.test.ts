@@ -28,8 +28,8 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
     jsonMock = jest.fn().mockReturnThis();
 
     mockResponse = {
-      status: statusMock,
-      json: jsonMock
+      status: statusMock as never,
+      json: jsonMock as never
     };
 
     mockRequest = {
@@ -60,7 +60,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
         }
       ];
 
-      (Movie.findAll as jest.Mock) = jest.fn().mockResolvedValue(mockMovies);
+      (Movie.findAll as jest.Mock) = jest.fn().mockResolvedValue(mockMovies as never);
 
       await getAllMovies(mockRequest as Request, mockResponse as Response);
 
@@ -77,7 +77,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
 
     it('should handle errors when fetching movies', async () => {
       const errorMessage = 'Database error';
-      (Movie.findAll as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage));
+      (Movie.findAll as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage) as never);
 
       await getAllMovies(mockRequest as Request, mockResponse as Response);
 
@@ -102,7 +102,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       };
 
       mockRequest.params = { id: '1' };
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(mockMovie);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(mockMovie as never);
      
       await getMovieById(mockRequest as Request, mockResponse as Response);
 
@@ -116,7 +116,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
 
     it('should return 404 when movie is not found', async () => {
       mockRequest.params = { id: '999' };
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(null);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(null as never);
 
       await getMovieById(mockRequest as Request, mockResponse as Response);
 
@@ -130,7 +130,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
     it('should handle errors when fetching movie by id', async () => {
       mockRequest.params = { id: '1' };
       const errorMessage = 'Database error';
-      (Movie.findByPk as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage));
+      (Movie.findByPk as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage) as never);
 
       await getMovieById(mockRequest as Request, mockResponse as Response);
 
@@ -163,7 +163,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       };
 
       mockRequest.body = movieData;
-      (Movie.create as jest.Mock) = jest.fn().mockResolvedValue(createdMovie);
+      (Movie.create as jest.Mock) = jest.fn().mockResolvedValue(createdMovie as never);
 
       await createMovie(mockRequest as Request, mockResponse as Response);
 
@@ -197,7 +197,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       };
 
       mockRequest.body = movieData;
-      (Movie.create as jest.Mock) = jest.fn().mockResolvedValue(createdMovie);
+      (Movie.create as jest.Mock) = jest.fn().mockResolvedValue(createdMovie as never);
 
       await createMovie(mockRequest as Request, mockResponse as Response);
 
@@ -220,7 +220,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       };
 
       const errorMessage = 'Database error';
-      (Movie.create as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage));
+      (Movie.create as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage) as never);
 
       await createMovie(mockRequest as Request, mockResponse as Response);
 
@@ -242,7 +242,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
         genre: 'Drama',
         releaseDate: '2023-01-01',
         photo: 'old.jpg',
-        update: jest.fn().mockResolvedValue(true)
+        update: jest.fn().mockResolvedValue(true as never)
       };
 
       const updateData = {
@@ -255,7 +255,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
 
       mockRequest.params = { id: '1' };
       mockRequest.body = updateData;
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(existingMovie);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(existingMovie as never);
 
       await updateMovie(mockRequest as Request, mockResponse as Response);
 
@@ -283,12 +283,12 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
         genre: 'Drama',
         releaseDate: '2023-01-01',
         photo: 'old.jpg',
-        update: jest.fn().mockResolvedValue(true)
+        update: jest.fn().mockResolvedValue(true as never)
       };
 
       mockRequest.params = { id: '1' };
       mockRequest.body = { title: 'New Title' };
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(existingMovie);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(existingMovie as never);
 
       await updateMovie(mockRequest as Request, mockResponse as Response);
 
@@ -304,7 +304,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
     it('should return 404 when movie to update is not found', async () => {
       mockRequest.params = { id: '999' };
       mockRequest.body = { title: 'New Title' };
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(null);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(null as never);
 
       await updateMovie(mockRequest as Request, mockResponse as Response);
 
@@ -319,7 +319,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       mockRequest.params = { id: '1' };
       mockRequest.body = { title: 'New Title' };
       const errorMessage = 'Database error';
-      (Movie.findByPk as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage));
+      (Movie.findByPk as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage) as never);
 
       await updateMovie(mockRequest as Request, mockResponse as Response);
 
@@ -337,11 +337,11 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
       const mockMovie = {
         id: 1,
         title: 'Test Movie',
-        destroy: jest.fn().mockResolvedValue(true)
+        destroy: jest.fn().mockResolvedValue(true as never)
       };
 
       mockRequest.params = { id: '1' };
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(mockMovie);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(mockMovie as never);
 
       await deleteMovie(mockRequest as Request, mockResponse as Response);
 
@@ -357,7 +357,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
 
     it('should return 404 when movie to delete is not found', async () => {
       mockRequest.params = { id: '999' };
-      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(null);
+      (Movie.findByPk as jest.Mock) = jest.fn().mockResolvedValue(null as never);
 
       await deleteMovie(mockRequest as Request, mockResponse as Response);
 
@@ -371,7 +371,7 @@ consoleErrorSpy=jest.spyOn(console,'error').mockImplementation(()=>{})
     it('should handle errors when deleting movie', async () => {
       mockRequest.params = { id: '1' };
       const errorMessage = 'Database error';
-      (Movie.findByPk as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage));
+      (Movie.findByPk as jest.Mock) = jest.fn().mockRejectedValue(new Error(errorMessage) as never);
 
       await deleteMovie(mockRequest as Request, mockResponse as Response);
 
