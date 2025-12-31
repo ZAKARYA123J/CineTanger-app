@@ -80,14 +80,12 @@ export default function Film() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.wrapper}>
-        {/* Header */}
         <View style={styles.header}>
           <Feather name="menu" size={24} color="#fff" />
           <Text style={styles.headerTitle}>CineTanger</Text>
           <Ionicons name="notifications" size={24} color="#fff" />
         </View>
 
-        {/* Search */}
         <View style={styles.searchWrapper}>
           <View style={styles.search}>
             <FontAwesome name="search" size={18} color="#888" />
@@ -101,7 +99,6 @@ export default function Film() {
           </View>
         </View>
 
-        {/* Movies Grid */}
         <FlatList
           data={filteredMovies}
           keyExtractor={(item) => item.id.toString()}
