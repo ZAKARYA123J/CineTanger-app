@@ -20,7 +20,7 @@ router.get('/:id', validateMovieId,  getMovieById);
 //Protected routes - Manage movies (Admin only)
 
 router.post('/',  createMovie);
-router.put('/:id',validateUpdateMovie , updateMovie);
+router.patch('/:id',validateUpdateMovie , updateMovie);
 router.delete('/:id', validateMovieId, deleteMovie);
 
 export default router;

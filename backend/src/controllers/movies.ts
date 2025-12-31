@@ -63,6 +63,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
 
     // Validation is now handled by express-validator middleware
     const newMovie = await Movie.create({
+      
       title,
       photo: posterUrl || '',  // ← Map posterUrl to photo field
       duration,
