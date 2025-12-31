@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createReservation, checkSeatAvailability } from '../service/api';
 
 export default function SeatSelectionScreen() {
@@ -29,14 +29,23 @@ export default function SeatSelectionScreen() {
     const [numberOfSeats, setNumberOfSeats] = useState(1);
     const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
-    const maxSeats = Math.min(parseInt(params.availableSeats), 10);
+    // Real-time availability check for selected showtime
+    const { data: availabilityData, refetch: refetchAvailability } = useQuery({
+        queryKey: ['availability', params.showtimeId],
+        queryFn: () => checkSeatAvailability(parseInt(params.showtimeId), 1),
+        refetchInterval: 5000, // Check every 5 seconds
+        enabled: true,
+    });
+
+    // Update max seats based on real-time data
+    const currentAvailableSeats = availabilityData?.data?.availableSeats || parseInt(params.availableSeats);
+    const maxSeats = Math.min(currentAvailableSeats, 10);
     const totalPrice = parseFloat(params.price) * numberOfSeats;
 
     // Mutation for creating reservation
     const reservationMutation = useMutation({
         mutationFn: createReservation,
         onSuccess: (data) => {
-            // Navigate to confirmation screen
             router.push({
                 pathname: '/confirmation',
                 params: {
@@ -46,7 +55,7 @@ export default function SeatSelectionScreen() {
                     hallName: params.hallName,
                     time: params.time,
                     numberOfSeats: numberOfSeats.toString(),
-                    totalPrice: totalPrice.toFixed(2),
+                    totalPrice: (totalPrice + 2).toFixed(2),
                 },
             });
         },
@@ -69,7 +78,6 @@ export default function SeatSelectionScreen() {
             );
 
             if (response.data.isAvailable) {
-                // Proceed with booking
                 handleConfirmBooking();
             } else {
                 Alert.alert(
@@ -149,7 +157,7 @@ export default function SeatSelectionScreen() {
                 {/* Seat Counter */}
                 <View style={styles.seatSection}>
                     <Text style={styles.sectionTitle}>Number of Seats</Text>
-                    
+
                     <View style={styles.seatCounter}>
                         <TouchableOpacity
                             style={[
