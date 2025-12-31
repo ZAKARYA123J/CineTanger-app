@@ -1,22 +1,50 @@
-import theater from "../models/theater.js"
 import { Request, Response } from "express"
+import { movie, showtime, theater } from '../models/associations.js';
+
 export const addTheater = async (req: Request, res: Response) => {
     try {
         const { title, name, capacity } = req.body
+
         if (!title || !name || !capacity) {
-            return res.status(400).json({ message: "add your theater" })
+            return res.status(400).json({ message: "Please provide all theater details" })
         }
-        const save = await theater.create({ title, name, capacity })
-        return res.status(200).json({ message: "theater is confirme", save })
+
+        const newTheater = await theater.create({ title, name, capacity })
+
+        return res.status(200).json({
+            message: "Theater created successfully",
+            data: newTheater
+        })
     } catch (error) {
-        return res.status(400).json({ message: "theater is error", error })
+        return res.status(500).json({
+            message: "Error creating theater",
+            error
+        })
     }
 }
+
 export const allTheater = async (req: Request, res: Response) => {
     try {
-        const get = await theater.findAll()
-        res.status(200).json({ message: "confirme get theater", get })
+        const theaters = await theater.findAll({
+            include: [{
+                model: showtime,
+                as: 'showtimes',
+                include: [{
+                    model: movie,
+                    as: 'movie'
+                }]
+            }]
+        });
+
+        res.status(200).json({
+            message: "Theaters retrieved successfully",
+            data: theaters
+        });
+
     } catch (error) {
-        res.status(400).json({ message: "showtime not theater", error })
+        res.status(500).json({
+            message: "Error fetching theaters",
+            error
+        });
     }
 }

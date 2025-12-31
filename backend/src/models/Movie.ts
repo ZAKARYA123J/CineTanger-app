@@ -1,5 +1,7 @@
 import { sequelize } from "../config/Database.js";
 import { DataType, DataTypes } from "sequelize";
+import showtime from "./showtime.js";
+import theater from "./theater.js";
 const movie = sequelize.define("Movie", {
     id: {
         type: DataTypes.INTEGER,

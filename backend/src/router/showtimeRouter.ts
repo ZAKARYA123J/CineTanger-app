@@ -4,5 +4,5 @@ import express from "express"
 const router = express.Router()
 
 router.post("/showtime", Showtime)
-router.get("/showtime", validationMiddlewares, allShowtime)
+router.get("/showtime/:id", allShowtime)
 export default router;

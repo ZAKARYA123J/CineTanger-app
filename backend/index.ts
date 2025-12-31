@@ -1,6 +1,7 @@
 import express, { type Request, type Response } from "express"
 import authRouter from "./src/router/authRouter.js"
 import "./app.js"
+import './src/models/associations.js';
 import theaterRouter from "./src/router/theaterRouter.js";
 import showtimeRouter from "./src/router/showtimeRouter.js";
 import reservations from "./src/routes/reservations.js";

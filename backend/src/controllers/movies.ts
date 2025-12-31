@@ -1,10 +1,9 @@
 import type { Request, Response } from 'express';
-import Movie from '../models/Movie.js';
+import { movie, showtime, theater } from '../models/associations.js';
 
-// Get all movies 
 export const getAllMovies = async (req: Request, res: Response): Promise<void> => {
   try {
-    const movies = await Movie.findAll({
+    const movies = await movie.findAll({
       order: [['createdAt', 'DESC']]
     });
     res.status(200).json({
@@ -22,12 +21,20 @@ export const getAllMovies = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// Get movie by id 
 export const getMovieById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
-    const movieData = await Movie.findByPk(id);
+    const movieData = await movie.findByPk(id, {
+      include: [{
+        model: showtime,
+        as: 'showtimes',
+        include: [{
+          model: theater,
+          as: 'theater'
+        }]
+      }]
+    });
 
     if (!movieData) {
       res.status(404).json({
@@ -36,6 +43,7 @@ export const getMovieById = async (req: Request, res: Response): Promise<void> =
       });
       return;
     }
+
     res.status(200).json({
       success: true,
       data: movieData
@@ -50,7 +58,6 @@ export const getMovieById = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// Create a new movie
 export const createMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
@@ -61,8 +68,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       photo,
     } = req.body;
 
-    // Validation is now handled by express-validator middleware
-    const newMovie = await Movie.create({
+    const newMovie = await movie.create({
       title,
       photo: photo || '',
       duration,
@@ -85,7 +91,6 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Update a movie 
 export const updateMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -97,7 +102,7 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       posterUrl
     } = req.body;
 
-    const movieData = await Movie.findByPk(id);
+    const movieData = await movie.findByPk(id);
 
     if (!movieData) {
       res.status(404).json({
@@ -107,7 +112,6 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Update provided fields - validation handled by middleware
     await movieData.update({
       title: title || movieData.title,
       duration: duration || movieData.duration,
@@ -131,12 +135,11 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Delete a movie
 export const deleteMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
-    const movieData = await Movie.findByPk(id);
+    const movieData = await movie.findByPk(id);
 
     if (!movieData) {
       res.status(404).json({

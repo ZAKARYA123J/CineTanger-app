@@ -7,6 +7,12 @@ export const getMovie = async () => {
 }
 
 export const getMovieById = async (id: number | string) => {
-    const movie = await axios.get(`${API_URL}/${id}`)
-    return movie.data.data
-}
+    try {
+        const response = await axios.get(`${API_URL}/${id}`);
+        console.log("MovieById response:", response.data);
+        return response.data.data;
+    } catch (err) {
+        console.error("Error fetching movie by id:", err);
+        throw err;
+    }
+};
