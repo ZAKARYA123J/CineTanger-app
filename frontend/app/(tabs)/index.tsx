@@ -7,7 +7,7 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <ThemedText type="title" style={styles.title}>
-          🎬 CinéTanger
+           CinéTanger
         </ThemedText>
         <ThemedText style={styles.subtitle}>
           Bienvenue dans votre cinéma
