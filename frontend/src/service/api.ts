@@ -11,11 +11,18 @@ export const getMovieById = async (id: number | string) => {
     return movie.data.data
 }
 
-// Reservation APIs 
+// ===== NEW: Showtime & Reservation APIs =====
 
 export const getShowtimesByMovieId = async (movieId: number | string) => {
     const response = await axios.get(`${API_URL}/showtimes`, {
         params: { movieId }
+    });
+    return response.data;
+}
+
+export const checkSeatAvailability = async (showtimeId: number, numberOfSeats: number) => {
+    const response = await axios.post(`${API_URL}/showtimes/${showtimeId}/check-availability`, {
+        numberOfSeats
     });
     return response.data;
 }
@@ -34,9 +41,7 @@ export const getReservationByCode = async (code: string) => {
     return response.data;
 }
 
-export const checkSeatAvailability = async (showtimeId: number, numberOfSeats: number) => {
-    const response = await axios.post(`${API_URL}/showtimes/${showtimeId}/check-availability`, {
-        numberOfSeats
-    });
+export const cancelReservation = async (confirmationCode: string) => {
+    const response = await axios.delete(`${API_URL}/reservations/${confirmationCode}`);
     return response.data;
 }
