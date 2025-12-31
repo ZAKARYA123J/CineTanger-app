@@ -27,6 +27,13 @@ const movie = sequelize.define("Movie", {
     genre: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    artist: {
+        type: DataTypes.TEXT
     }
 }, {
     tableName: "Movie",

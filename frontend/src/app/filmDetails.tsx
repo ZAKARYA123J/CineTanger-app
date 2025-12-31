@@ -3,8 +3,13 @@ import { useLocalSearchParams, router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { getMovieById } from "../service/api";
+import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
 
 export default function MovieDetails() {
+    const [fontsLoaded] = useFonts({
+        "Alkatra-Regular": require("../fonts/Alkatra-VariableFont_wght.ttf"),
+        Knewave_400Regular,
+    });
     const { id } = useLocalSearchParams<{ id: string }>();
     const movieId = Number(id);
 
@@ -54,88 +59,111 @@ export default function MovieDetails() {
                     resizeMode="cover"
                 />
             )}
+            <View style={{ width: "95%", flex: 1 }}>
 
-            <View style={styles.content}>
-                <Text style={styles.title}>{movieInfo.title || "Unknown Title"}</Text>
+                <View style={styles.content}>
+                    <Text style={styles.title}>{movieInfo.title || "Unknown Title"}</Text>
 
-                {movieInfo.genre && (
-                    <View style={styles.badge}>
-                        <Text style={styles.genre}>{movieInfo.genre}</Text>
-                    </View>
-                )}
-
-                <View style={styles.row}>
-                    <Feather name="calendar" size={16} color="#aaa" />
-                    <Text style={styles.text}>{movieInfo.releaseDate || "N/A"}</Text>
-                </View>
-
-                <View style={styles.row}>
-                    <Feather name="clock" size={16} color="#aaa" />
-                    <Text style={styles.text}>{movieInfo.duration || "N/A"} minutes</Text>
-                </View>
-
-                <View style={styles.showtimesSection}>
-                    <Text style={styles.sectionTitle}>Showtimes by Theater</Text>
-
-                    {showtimes.length > 0 ? (
-                        showtimes.map((showtime: any) => {
-                            const availableSeats = showtime.totalSeats - showtime.bookedSeats;
-
-                            return (
-                                <View key={showtime.id} style={styles.showtimeCard}>
-                                    <View style={styles.theaterInfo}>
-                                        <Feather name="map-pin" size={20} color="#d41132" />
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={styles.theaterName}>
-                                                {showtime.theater?.title || "Unknown Theater"}
-                                            </Text>
-                                            {showtime.theater?.name && (
-                                                <Text style={styles.theaterLocation}>
-                                                    {showtime.theater.name}
-                                                </Text>
-                                            )}
-                                        </View>
-                                    </View>
-                                    <View style={styles.showtimeDetails}>
-                                        <View style={styles.timeRow}>
-                                            <Feather name="clock" size={16} color="#4ade80" />
-                                            <Text style={styles.timeText}>
-                                                {new Date(showtime.startTime).toLocaleTimeString('en-US', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    hour12: false
-                                                })}
-                                            </Text>
-                                        </View>
-
-                                        <View style={styles.priceRow}>
-                                            <Text style={styles.price}>{showtime.price} DH</Text>
-                                            <Text style={styles.seatsAvailable}>
-                                                {availableSeats} seats available
-                                            </Text>
-                                        </View>
-
-                                        <TouchableOpacity
-                                            style={[
-                                                styles.selectBtn,
-                                                availableSeats === 0 && styles.selectBtnDisabled
-                                            ]}
-                                            disabled={availableSeats === 0}
-                                        >
-                                            <Text style={styles.selectText}>
-                                                {availableSeats === 0 ? "Sold Out" : "Select Seats"}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            );
-                        })
-                    ) : (
-                        <View style={styles.emptyContainer}>
-                            <Feather name="calendar" size={50} color="#444" />
-                            <Text style={styles.emptyText}>No showtimes available</Text>
+                    {movieInfo.genre && (
+                        <View style={styles.badge}>
+                            <Text style={styles.genre}>{movieInfo.genre}</Text>
                         </View>
                     )}
+
+                    <View style={styles.row}>
+                        <Feather name="calendar" size={16} color="#aaa" />
+                        <Text style={styles.text}>{movieInfo.releaseDate || "N/A"}</Text>
+                    </View>
+
+                    <View style={styles.row}>
+                        <Feather name="clock" size={16} color="#aaa" />
+                        <Text style={styles.text}>{movieInfo.duration || "N/A"} minutes</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.description}>{movieInfo.description}</Text>
+                    </View>
+                    {movieInfo.artist && (
+                        <View style={styles.castSection}>
+                            <Text style={styles.castTitle}>Cast</Text>
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={styles.castList}
+                            >
+                                {movieInfo.artist.split(',').map((photo: string, index: number) => (
+                                    <View key={index} style={styles.castItem}>
+                                        <Image
+                                            source={{ uri: photo.trim() }}
+                                            style={styles.castPhoto}
+                                        />
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
+                    <View style={styles.showtimesSection}>
+                        <Text style={styles.sectionTitle}>Showtimes by Theater</Text>
+
+                        {showtimes.length > 0 ? (
+                            showtimes.map((showtime: any) => {
+                                const availableSeats = showtime.totalSeats - showtime.bookedSeats;
+
+                                return (
+                                    <View key={showtime.id} style={styles.showtimeCard}>
+                                        <View style={styles.theaterInfo}>
+                                            <Feather name="map-pin" size={20} color="#d41132" />
+                                            <View style={{ flex: 1 }}>
+                                                <Text style={styles.theaterName}>
+                                                    {showtime.theater?.title || "Unknown Theater"}
+                                                </Text>
+                                                {showtime.theater?.name && (
+                                                    <Text style={styles.theaterLocation}>
+                                                        {showtime.theater.name}
+                                                    </Text>
+                                                )}
+                                            </View>
+                                        </View>
+                                        <View style={styles.showtimeDetails}>
+                                            <View style={styles.timeRow}>
+                                                <Feather name="clock" size={16} color="#4ade80" />
+                                                <Text style={styles.timeText}>
+                                                    {new Date(showtime.startTime).toLocaleTimeString('en-US', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: false
+                                                    })}
+                                                </Text>
+                                            </View>
+
+                                            <View style={styles.priceRow}>
+                                                <Text style={styles.price}>{showtime.price} DH</Text>
+                                                <Text style={styles.seatsAvailable}>
+                                                    {availableSeats} seats available
+                                                </Text>
+                                            </View>
+
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.selectBtn,
+                                                    availableSeats === 0 && styles.selectBtnDisabled
+                                                ]}
+                                                disabled={availableSeats === 0}
+                                            >
+                                                <Text style={styles.selectText}>
+                                                    {availableSeats === 0 ? "Sold Out" : "Select Seats"}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                );
+                            })
+                        ) : (
+                            <View style={styles.emptyContainer}>
+                                <Feather name="calendar" size={50} color="#444" />
+                                <Text style={styles.emptyText}>No showtimes available</Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
             </View>
         </ScrollView>
@@ -147,14 +175,45 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#121212",
     },
-
+    artist: {
+        width: "80%",
+        height: 200,
+    },
     loadingText: {
         color: "#fff",
         fontSize: 16,
         textAlign: "center",
         marginTop: 100,
     },
+    castSection: {
+        marginTop: 15,
+        marginBottom: 15,
+    },
 
+    castTitle: {
+        fontFamily: "Knewave_400Regular",
+        fontSize: 18,
+        color: "#fff",
+        marginBottom: 12,
+    },
+
+    castList: {
+        gap: 12,
+        paddingRight: 20,
+    },
+
+    castItem: {
+        alignItems: "center",
+    },
+
+    castPhoto: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        borderWidth: 2,
+        borderColor: "#d41132",
+        backgroundColor: "#1a1a1a",
+    },
     errorText: {
         color: "#fff",
         fontSize: 16,
@@ -217,6 +276,7 @@ const styles = StyleSheet.create({
 
     showtimesSection: {
         marginTop: 30,
+        alignItems: "center",
     },
 
     sectionTitle: {
@@ -233,6 +293,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderWidth: 1,
         borderColor: "#2a2a2a",
+        width: "100%"
     },
 
     theaterInfo: {
@@ -319,4 +380,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 10,
     },
+    description: {
+        fontFamily: "Knewave_400Regular",
+        color: "white",
+        width: "100%"
+    }
 });
