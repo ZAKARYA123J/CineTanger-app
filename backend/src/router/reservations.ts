@@ -2,7 +2,8 @@ import express from 'express';
 import {
   createReservation,
   getReservationByCode,
-  cancelReservation
+  cancelReservation,
+  checkAvailability
 } from '../controllers/reservations.js';
 import {
   validateCreateReservation,
@@ -17,6 +18,9 @@ router.post('/', validateCreateReservation, authmiddlewares, createReservation);
 // Get reservation by confirmation code
 router.get('/:code', validateConfirmationCode, authmiddlewares, getReservationByCode);
 // Cancel reservation by confirmation code
+// Cancel reservation by confirmation code
 router.delete('/:code', validateConfirmationCode, authmiddlewares, cancelReservation);
+// Check seat availability
+router.post('/check-availability', authmiddlewares, checkAvailability);
 
 export default router;

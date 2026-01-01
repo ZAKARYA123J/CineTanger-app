@@ -33,7 +33,7 @@ export default function ConfirmationScreen() {
     };
 
     const handleGoHome = () => {
-        router.push('/(tabs)/');
+        router.push('/(tabs)');
     };
 
     const handleViewReservations = () => {
@@ -124,7 +124,7 @@ export default function ConfirmationScreen() {
                     {/* Payment Summary */}
                     <View style={styles.paymentCard}>
                         <Text style={styles.cardTitle}>Payment Summary</Text>
-                        
+
                         <View style={styles.paymentRow}>
                             <Text style={styles.paymentLabel}>
                                 {params.numberOfSeats}x Adult Standard

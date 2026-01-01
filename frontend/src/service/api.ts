@@ -17,3 +17,30 @@ export const getMovieById = async (id: number | string) => {
         throw err;
     }
 };
+
+export const createReservation = async (reservationData: {
+    userId: number;
+    showtimeId: number;
+    numberOfSeats: number;
+}) => {
+    try {
+        const response = await axios.post(`${API_URL}/reservations`, reservationData);
+        return response;
+    } catch (err) {
+        console.error("Error creating reservation:", err);
+        throw err;
+    }
+};
+
+export const checkSeatAvailability = async (showtimeId: number, numberOfSeats: number) => {
+    try {
+        const response = await axios.post(`${API_URL}/reservations/check-availability`, {
+            showtimeId,
+            numberOfSeats
+        });
+        return response;
+    } catch (err) {
+        console.error("Error checking availability:", err);
+        throw err;
+    }
+};

@@ -20,31 +20,28 @@ export default function SeatSelectionScreen() {
         movieTitle: string;
         moviePhoto: string;
         showtimeId: string;
-        hallName: string;
-        time: string;
-        price: string;
+        pricePerSeat: string;
         availableSeats: string;
     }>();
 
     const [numberOfSeats, setNumberOfSeats] = useState(1);
     const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
-    const maxSeats = Math.min(parseInt(params.availableSeats), 10);
-    const totalPrice = parseFloat(params.price) * numberOfSeats;
+    const pricePerSeat = parseFloat(params.pricePerSeat) || 0;
+    const maxSeats = Math.min(parseInt(params.availableSeats) || 10, 10);
+    const subtotal = pricePerSeat * numberOfSeats;
+    const bookingFee = 2.00;
+    const totalPrice = subtotal + bookingFee;
 
-    // Mutation for creating reservation
     const reservationMutation = useMutation({
         mutationFn: createReservation,
         onSuccess: (data) => {
-            // Navigate to confirmation screen
             router.push({
                 pathname: '/confirmation',
                 params: {
                     confirmationCode: data.data.confirmationCode,
                     movieTitle: params.movieTitle,
                     moviePhoto: params.moviePhoto,
-                    hallName: params.hallName,
-                    time: params.time,
                     numberOfSeats: numberOfSeats.toString(),
                     totalPrice: totalPrice.toFixed(2),
                 },
@@ -58,7 +55,6 @@ export default function SeatSelectionScreen() {
         },
     });
 
-    // Check seat availability before booking
     const handleCheckAvailability = async () => {
         setIsCheckingAvailability(true);
 
@@ -69,7 +65,6 @@ export default function SeatSelectionScreen() {
             );
 
             if (response.data.isAvailable) {
-                // Proceed with booking
                 handleConfirmBooking();
             } else {
                 Alert.alert(
@@ -87,9 +82,7 @@ export default function SeatSelectionScreen() {
         }
     };
 
-    // Confirm booking
     const handleConfirmBooking = () => {
-        // TODO: Replace with actual user ID from auth
         const userId = 1;
 
         reservationMutation.mutate({
@@ -113,7 +106,6 @@ export default function SeatSelectionScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Feather name="arrow-left" size={24} color="#fff" />
@@ -123,7 +115,6 @@ export default function SeatSelectionScreen() {
             </View>
 
             <View style={styles.content}>
-                {/* Movie Info */}
                 <View style={styles.movieSection}>
                     <Image
                         source={{ uri: params.moviePhoto }}
@@ -135,21 +126,16 @@ export default function SeatSelectionScreen() {
                         </Text>
                         <View style={styles.sessionInfo}>
                             <View style={styles.infoRow}>
-                                <Feather name="clock" size={14} color="#aaa" />
-                                <Text style={styles.infoText}>{params.time}</Text>
-                            </View>
-                            <View style={styles.infoRow}>
-                                <Feather name="monitor" size={14} color="#aaa" />
-                                <Text style={styles.infoText}>{params.hallName}</Text>
+                                <Feather name="ticket" size={14} color="#aaa" />
+                                <Text style={styles.infoText}>{pricePerSeat.toFixed(2)} DH per seat</Text>
                             </View>
                         </View>
                     </View>
                 </View>
 
-                {/* Seat Counter */}
                 <View style={styles.seatSection}>
                     <Text style={styles.sectionTitle}>Number of Seats</Text>
-                    
+
                     <View style={styles.seatCounter}>
                         <TouchableOpacity
                             style={[
@@ -186,7 +172,6 @@ export default function SeatSelectionScreen() {
                     </Text>
                 </View>
 
-                {/* Price Breakdown */}
                 <View style={styles.priceSection}>
                     <Text style={styles.sectionTitle}>Price Details</Text>
 
@@ -194,12 +179,12 @@ export default function SeatSelectionScreen() {
                         <Text style={styles.priceLabel}>
                             {numberOfSeats}x Adult Standard
                         </Text>
-                        <Text style={styles.priceValue}>${totalPrice.toFixed(2)}</Text>
+                        <Text style={styles.priceValue}>{subtotal.toFixed(2)} DH</Text>
                     </View>
 
                     <View style={styles.priceRow}>
                         <Text style={styles.priceLabel}>Booking Fee</Text>
-                        <Text style={styles.priceValue}>$2.00</Text>
+                        <Text style={styles.priceValue}>{bookingFee.toFixed(2)} DH</Text>
                     </View>
 
                     <View style={styles.divider} />
@@ -207,18 +192,17 @@ export default function SeatSelectionScreen() {
                     <View style={styles.priceRow}>
                         <Text style={styles.totalLabel}>Total Amount</Text>
                         <Text style={styles.totalValue}>
-                            ${(totalPrice + 2).toFixed(2)}
+                            {totalPrice.toFixed(2)} DH
                         </Text>
                     </View>
                 </View>
             </View>
 
-            {/* Bottom Bar */}
             <View style={styles.bottomBar}>
                 <View>
                     <Text style={styles.bottomLabel}>Total to pay</Text>
                     <Text style={styles.bottomPrice}>
-                        ${(totalPrice + 2).toFixed(2)}
+                        {totalPrice.toFixed(2)} DH
                     </Text>
                 </View>
                 <TouchableOpacity
@@ -320,7 +304,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 25,
-        backgroundColor: '#2563EB',
+        backgroundColor: '#d41132',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -375,7 +359,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     totalValue: {
-        color: '#2563EB',
+        color: '#d41132',
         fontSize: 20,
         fontWeight: 'bold',
     },
@@ -402,7 +386,7 @@ const styles = StyleSheet.create({
     confirmBtn: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#2563EB',
+        backgroundColor: '#d41132',
         paddingVertical: 14,
         paddingHorizontal: 24,
         borderRadius: 25,

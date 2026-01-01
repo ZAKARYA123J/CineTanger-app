@@ -1,16 +1,16 @@
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedView } from '@/components/ui/reservation/reservation/themed-view';
 
 export default function ReservationsScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText type="title">Mes Réservations</ThemedText>
+        <ThemedText type="title" style={styles.title}>Mes Réservations</ThemedText>
       </View>
-      
+
       <View style={styles.content}>
-        <ThemedText>Vos réservations - À venir</ThemedText>
+        <ThemedText style={styles.title1}>Vos réservations - À venir</ThemedText>
       </View>
     </ThemedView>
   );
@@ -19,6 +19,7 @@ export default function ReservationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1a1a1a',
   },
   header: {
     padding: 20,
@@ -29,5 +30,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  title1: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
 });

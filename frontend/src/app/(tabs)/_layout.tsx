@@ -2,8 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from '@/components/ui/reservation/use-color-scheme';
 import { CinetangerColors } from '@/constants/theme';
 
 export default function TabLayout() {
@@ -11,30 +10,21 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName='filmScreen'
       screenOptions={{
         tabBarActiveTintColor: CinetangerColors.tabBar.active,
         tabBarInactiveTintColor: CinetangerColors.tabBar.inactive,
         headerShown: false,
-        tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: CinetangerColors.tabBar.background[colorScheme ?? 'light'],
-          borderTopColor: CinetangerColors.border[colorScheme ?? 'light'],
+          backgroundColor: CinetangerColors.tabBar.background[(colorScheme === 'dark' ? 'dark' : 'light')],
+          borderTopColor: CinetangerColors.border[(colorScheme === 'dark' ? 'dark' : 'light')],
           borderTopWidth: 1,
         },
       }}>
       <Tabs.Screen
-        name="index"
+        name="filmScreen"
         options={{
-          title: 'Accueil',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size || 28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="movies"
-        options={{
-          title: 'Films',
+          title: 'filmScreen',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="film" size={size || 28} color={color} />
           ),

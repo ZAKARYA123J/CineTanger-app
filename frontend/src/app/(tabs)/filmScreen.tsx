@@ -1,7 +1,7 @@
 import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
-import { getMovie } from "../service/api";
+import { getMovie } from "../../service/api";
 import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Feather from "@expo/vector-icons/Feather";
@@ -20,7 +20,7 @@ interface Movie {
 
 export default function Film() {
   const [fontsLoaded] = useFonts({
-    "Alkatra-Regular": require("../fonts/Alkatra-VariableFont_wght.ttf"),
+    "Alkatra-Regular": require("@/src/fonts/Alkatra-VariableFont_wght.ttf"),
     Knewave_400Regular,
   });
 

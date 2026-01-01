@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions
 import { useLocalSearchParams, router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { getMovieById } from "../service/api";
+import { getMovieById } from "@/src/service/api";
 import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -19,7 +19,7 @@ export default function MovieDetails() {
     });
 
     const [fontsLoaded] = useFonts({
-        "Alkatra-Regular": require("../fonts/Alkatra-VariableFont_wght.ttf"),
+        "Alkatra-Regular": require("@/src/fonts/Alkatra-VariableFont_wght.ttf"),
         Knewave_400Regular,
     });
 
@@ -163,13 +163,27 @@ export default function MovieDetails() {
 
                                         <View style={styles.bookingContainer}>
                                             <View style={styles.priceContainer}>
-                                                <Text style={styles.priceLabel}>Price</Text>
+                                                <Text style={styles.priceLabel}>Price per seat</Text>
                                                 <Text style={styles.price}>{showtime.price} DH</Text>
                                             </View>
 
                                             <TouchableOpacity
                                                 style={[styles.bookBtn, availableSeats === 0 && styles.bookBtnDisabled]}
                                                 disabled={availableSeats === 0}
+                                                onPress={() => {
+                                                    if (!movie?.id) return;
+                                                    router.push({
+                                                        pathname: "/seatSelection",
+                                                        params: {
+                                                            movieId: String(movie.id),
+                                                            movieTitle: movie.title ?? "",
+                                                            moviePhoto: movie.photo ?? "",
+                                                            showtimeId: String(showtime.id),
+                                                            pricePerSeat: String(showtime.price),
+                                                            availableSeats: String(availableSeats),
+                                                        }
+                                                    });
+                                                }}
                                             >
                                                 <Text style={styles.bookText}>
                                                     {availableSeats === 0 ? "Sold Out" : "Book Now"}
@@ -189,7 +203,7 @@ export default function MovieDetails() {
                     )}
                 </View>
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 }
 
