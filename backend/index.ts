@@ -1,22 +1,42 @@
-import express, { type Request, type Response } from "express"
-import authRouter from "./src/router/authRouter.js"
-import "./app.js"
-import './src/models/associations.js';
-import theaterRouter from "./src/router/theaterRouter.js";
-import showtimeRouter from "./src/router/showtimeRouter.js";
-import reservations from "./src/routes/reservations.js";
-import movies from "./src/routes/movies.js"
-const app = express()
+import express, { Request, Response } from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
+const app = express();
 app.use(express.json());
-app.use("/api/auth", authRouter)
-app.use("/api/auth", showtimeRouter)
-app.use("/api/auth", movies)
-app.use("/api/auth", theaterRouter)
-app.use("/api/auth", reservations)
+
+const PORT = 5000;
+
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Hello World API',
+            version: '1.0.0',
+            description: 'Simple Hello World API with Swagger',
+        },
+        servers: [{ url: `http://localhost:${PORT}` }],
+    },
+    apis: ['./src/router/*.ts']
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Hello world
+ *     responses:
+ *       200:
+ *         description: Returns Hello World message
+ */
 app.get('/', (_req: Request, res: Response) => {
-    res.send("hello word")
-})
-const PORT = 3000
+    res.send("Hello World!");
+});
+
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`)
-})
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
+});
