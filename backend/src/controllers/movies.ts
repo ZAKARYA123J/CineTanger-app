@@ -65,12 +65,13 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       duration,
       genre,
       releaseDate,
-      photo,
+      posterUrl,  // ← Changed from 'photo' to 'posterUrl'
     } = req.body;
 
-    const newMovie = await movie.create({
+    // Validation is now handled by express-validator middleware
+    const newMovie = await Movie.create({
       title,
-      photo: photo || '',
+      photo: posterUrl || '',  // ← Map posterUrl to photo field
       duration,
       releaseDate,
       genre
@@ -91,6 +92,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
+
 export const updateMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -102,7 +104,7 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       posterUrl
     } = req.body;
 
-    const movieData = await movie.findByPk(id);
+    const movieData = await Movie.findByPk(id);
 
     if (!movieData) {
       res.status(404).json({
@@ -119,6 +121,7 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
       releaseDate: releaseDate || movieData.releaseDate,
       photo: posterUrl || movieData.photo
     });
+
 
     res.status(200).json({
       success: true,

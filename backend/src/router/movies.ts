@@ -8,7 +8,8 @@ import {
 } from '../controllers/movies.js';
 import {
   validateCreateMovie,
-  validateMovieId
+  validateMovieId,
+  validateUpdateMovie
 } from '../validation/movieValidation.js';
 const router: any = express.Router();
 
@@ -18,8 +19,7 @@ router.get('/:id', validateMovieId, getMovieById);
 
 //Protected routes - Manage movies (Admin only)
 
-router.post('/', validateCreateMovie, createMovie);
-router.put('/:id', validateCreateMovie, updateMovie);
+router.patch('/:id', validateUpdateMovie, updateMovie);
 router.delete('/:id', validateMovieId, deleteMovie);
 
 export default router;

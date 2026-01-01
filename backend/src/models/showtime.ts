@@ -12,7 +12,7 @@ const showtime = sequelize.define("Showtime", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "Movie",
+            model: "movies",
             key: "id"
         }
     },
@@ -41,7 +41,7 @@ const showtime = sequelize.define("Showtime", {
         allowNull: false
     },
 }, {
-    tableName: "Showtime",
+    tableName: "showtimes",
     timestamps: true
 })
 showtime.belongsTo(movie, { foreignKey: "MovieId" });

@@ -28,7 +28,8 @@ export default function Film() {
     queryKey: ["movies"],
     queryFn: getMovie,
   });
-  console.log(data)
+
+  console.log("Raw API response:", data);
   const [search, setSearch] = useState("");
 
   if (!fontsLoaded || isLoading) {
