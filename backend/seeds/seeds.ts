@@ -6,7 +6,7 @@ import showtime from "../src/models/showtime.js";
 async function seedAll() {
     try {
         await sequelize.authenticate();
-        await sequelize.sync({ force: true });
+        await sequelize.sync({ force: false });
 
         await movie.bulkCreate([
             {

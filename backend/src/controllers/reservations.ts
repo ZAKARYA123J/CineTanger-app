@@ -4,12 +4,10 @@ import showtime from "../models/showtime.js";
 import { calculateAvailableSeats } from "../utils/seatsHelper.js";
 import { generateConfirmationCode } from '../utils/confirmationCodeGenerator.js';
 
-//create a  new reservation 
 export const createReservation = async (req: Request, res: Response): Promise<void> => {
   try {
     const { showtimeId, numberOfSeats } = req.body;
     const userId = req.user!.id;
-    //check if show time exists
     const show = await showtime.findByPk(showtimeId);
     if (!show) {
       res.status(400).json({
@@ -18,7 +16,6 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
       });
       return;
     }
-    //check if enough seats are available
     const availableSeats = await calculateAvailableSeats(showtimeId);
     if (availableSeats < numberOfSeats) {
       res.status(400).json({
@@ -27,12 +24,9 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
       });
       return;
     }
-    //generate unique confirmation code
     const confirmationCode = await generateConfirmationCode();
-    //calculate total price
     const pricePerSeat = show.get('price') as number;
     const totalPrice = pricePerSeat * numberOfSeats;
-    //create reservation
     const newReservation = await reservation.create({
       userId,
       showtimeId,
@@ -40,7 +34,6 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
       confirmationCode,
       totalPrice
     });
-    //update booked seats in showtime 
     const currentBooked = show.get('bookedSeats') as number;
     await show.update({
       bookedSeats: currentBooked + numberOfSeats
@@ -60,7 +53,6 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
     });
   }
 };
-//get reservation by confirmation code 
 export const getReservationByCode = async (req: Request, res: Response): Promise<void> => {
   try {
     const { code } = req.params;
@@ -89,11 +81,9 @@ export const getReservationByCode = async (req: Request, res: Response): Promise
     });
   }
 };
-//cancel reservation 
 export const cancelReservation = async (req: Request, res: Response): Promise<void> => {
   try {
     const { code } = req.params;
-    //find reservation 
     const reservationData = await reservation.findOne({
       where: { confirmationCode: code }
     });
@@ -113,7 +103,6 @@ export const cancelReservation = async (req: Request, res: Response): Promise<vo
     }
     const showtimeId = reservationData.get('showtimeId') as number;
     const numberOfSeats = reservationData.get('numberOfSeats') as number;
-    //Release seats back to showtime
     const show = await showtime.findByPk(showtimeId);
     if (show) {
       const currentBooked = show.get('bookedSeats') as number;
@@ -121,7 +110,6 @@ export const cancelReservation = async (req: Request, res: Response): Promise<vo
         bookedSeats: Math.max(0, currentBooked - numberOfSeats)
       });
     }
-    //delete reservation
     await reservationData.destroy();
 
     res.status(200).json({
@@ -139,3 +127,34 @@ export const cancelReservation = async (req: Request, res: Response): Promise<vo
   }
 };
 
+
+export const checkAvailability = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { showtimeId, numberOfSeats } = req.body;
+
+    const show = await showtime.findByPk(showtimeId);
+    if (!show) {
+      res.status(404).json({
+        success: false,
+        message: 'Showtime not found'
+      });
+      return;
+    }
+
+    const availableSeats = await calculateAvailableSeats(showtimeId);
+    const isAvailable = availableSeats >= numberOfSeats;
+
+    res.status(200).json({
+      success: true,
+      isAvailable,
+      availableSeats
+    });
+  } catch (error) {
+    console.error('Error checking availability:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while checking availability',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
