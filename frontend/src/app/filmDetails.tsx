@@ -25,7 +25,7 @@ export default function MovieDetails() {
 
     const handleShare = async () => {
         try {
-            const movieUrl = `myapp://movie/${movieId}`; // Deep link
+            const movieUrl = `myapp://movie/${movieId}`;
             await Share.share({
                 message: `Check out this movie: ${data?.title}\nWatch it here: ${movieUrl}`,
                 url: movieUrl,
@@ -44,7 +44,6 @@ export default function MovieDetails() {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header */}
             <View style={styles.headerContainer}>
                 {movie.photo && (
                     <>
@@ -59,8 +58,6 @@ export default function MovieDetails() {
                     <Feather name="share-2" size={20} color="#fff" />
                 </TouchableOpacity>
             </View>
-
-            {/* Movie Info */}
             <View style={styles.movieInfoCard}>
                 <Text style={styles.title}>{movie.title || "Unknown Title"}</Text>
 
@@ -93,8 +90,6 @@ export default function MovieDetails() {
                         <Text style={styles.description}>{movie.description}</Text>
                     </View>
                 )}
-
-                {/* Cast */}
                 {movie.artist && (
                     <View style={styles.castSection}>
                         <Text style={styles.sectionTitle}>
@@ -112,8 +107,6 @@ export default function MovieDetails() {
                         </ScrollView>
                     </View>
                 )}
-
-                {/* Showtimes */}
                 <View style={styles.showtimesSection}>
                     <Text style={styles.sectionTitle}>
                         <Feather name="map-pin" size={20} color="#fff" /> Available Theaters
@@ -230,19 +223,19 @@ const styles = StyleSheet.create({
     shareBtn: { position: "absolute", top: 50, right: 20, backgroundColor: "rgba(0,0,0,0.7)", padding: 12, borderRadius: 25 },
 
     movieInfoCard: { backgroundColor: "#121212", borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -30, paddingHorizontal: 20, paddingTop: 25, paddingBottom: 30 },
-    title: { fontSize: 28, fontWeight: "bold", color: "#fff", marginBottom: 12, fontFamily: "Knewave_400Regular" },
+    title: { fontSize: 28, color: "#fff", marginBottom: 12, fontFamily: "Knewave_400Regular" },
 
     genreContainer: { marginBottom: 15 },
     genreBadge: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "rgba(212, 17, 50, 0.15)", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: "#d41132", alignSelf: "flex-start" },
-    genreText: { color: "#d41132", fontWeight: "bold", fontSize: 13 },
+    genreText: { color: "#d41132", fontFamily: "Knewave_400Regular", fontSize: 13 },
 
     metaContainer: { flexDirection: "row", alignItems: "center", backgroundColor: "#1a1a1a", padding: 15, borderRadius: 15, marginBottom: 20 },
     metaItem: { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 },
     metaDivider: { width: 1, height: 20, backgroundColor: "#333", marginHorizontal: 10 },
-    metaText: { color: "#fff", fontSize: 14, fontWeight: "600" },
+    metaText: { color: "#fff", fontFamily: "Knewave_400Regular", fontSize: 14, fontWeight: "600" },
 
     descriptionContainer: { marginBottom: 25 },
-    sectionTitle: { fontSize: 20, fontWeight: "bold", color: "#fff", marginBottom: 15, flexDirection: "row", alignItems: "center", gap: 8 },
+    sectionTitle: { fontSize: 20, fontFamily: "Knewave_400Regular", color: "#fff", marginBottom: 15, flexDirection: "row", alignItems: "center", gap: 8 },
     description: { color: "#aaa", lineHeight: 24, fontSize: 14, fontFamily: "Alkatra-Regular" },
 
     castSection: { marginBottom: 25 },
@@ -257,7 +250,7 @@ const styles = StyleSheet.create({
     theaterHeader: { flexDirection: "row", alignItems: "center", marginBottom: 15, paddingBottom: 15, borderBottomWidth: 1, borderBottomColor: "#2a2a2a" },
     theaterIconContainer: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: "rgba(212, 17, 50, 0.15)", justifyContent: "center", alignItems: "center", marginRight: 12 },
     theaterInfo: { flex: 1 },
-    theaterName: { color: "#fff", fontSize: 17, fontWeight: "bold", marginBottom: 4 },
+    theaterName: { color: "#fff", fontSize: 17, fontFamily: "Knewave_400Regular", marginBottom: 4 },
     theaterLocation: { color: "#888", fontSize: 13, flexDirection: "row", alignItems: "center", gap: 4 },
 
     showtimeContent: { gap: 15 },
@@ -267,15 +260,15 @@ const styles = StyleSheet.create({
     seatsProgressContainer: { gap: 8 },
     seatsProgressBar: { height: 8, backgroundColor: "#2a2a2a", borderRadius: 10, overflow: "hidden" },
     seatsProgressFill: { height: "100%", backgroundColor: "#d41132", borderRadius: 10 },
-    seatsText: { color: "#aaa", fontSize: 13 },
+    seatsText: { color: "#aaa", fontSize: 13, fontFamily: "Knewave_400Regular" },
 
     bookingContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 15 },
     priceContainer: { gap: 4 },
     priceLabel: { color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1 },
-    price: { color: "#4ade80", fontSize: 24, fontWeight: "bold" },
+    price: { color: "#4ade80", fontSize: 24, fontFamily: "Knewave_400Regular" },
     bookBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#d41132", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 15, shadowColor: "#d41132", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 5 },
     bookBtnDisabled: { backgroundColor: "#555", shadowOpacity: 0 },
-    bookText: { color: "#fff", fontWeight: "bold", fontSize: 15, fontFamily: "Knewave_400Regular" },
+    bookText: { color: "#fff", fontSize: 15, fontFamily: "Knewave_400Regular" },
 
     emptyContainer: { justifyContent: "center", alignItems: "center", paddingVertical: 60, gap: 15 },
     emptyText: { color: "#666", fontSize: 16, fontFamily: "Alkatra-Regular" },

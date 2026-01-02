@@ -14,6 +14,7 @@ import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loginUser } from "../service/api";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function Login() {
     const [fontsLoaded] = useFonts({
@@ -25,6 +26,8 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
+    if (!fontsLoaded) return null;
+
     const handleLogin = async () => {
         if (!email || !password) {
             Alert.alert("Error", "Please fill all fields");
@@ -35,62 +38,84 @@ export default function Login() {
         try {
             const res = await loginUser({ email, password });
 
-            console.log("Login response received:", res);
-            console.log("Token value:", res.token);
-
             if (!res.token) {
-                Alert.alert("Error", "No token in response: " + JSON.stringify(res));
+                Alert.alert("Error", "No token received from backend");
                 return;
             }
 
             await AsyncStorage.setItem("@user_token", res.token);
-            Alert.alert("Success", "Logged in successfully!");
-            router.push("/(tabs)/filmScreen");
 
+            Alert.alert("Success", "Logged in successfully!");
+            router.replace("/(tabs)/filmScreen");
         } catch (error: any) {
-            console.log("Login Error:", error.message);
-            Alert.alert("Error", error.message);
+            Alert.alert("Login Error", error.message);
         } finally {
             setLoading(false);
         }
     };
+
     return (
         <View style={{ flex: 1 }}>
             <StatusBar barStyle="light-content" />
+
             <ImageBackground
                 source={require("@/assets/images/image-login.jpg")}
                 style={styles.bg}
                 resizeMode="cover"
             >
                 <View style={styles.overlay} />
+
                 <View style={styles.content}>
                     <View style={styles.container}>
-                        <Image source={require("@/assets/images/image.png")} style={styles.logo} />
-                        <Text style={styles.title}>Login</Text>
-                        <TextInput
-                            placeholder="Enter your email"
-                            placeholderTextColor="gray"
-                            style={styles.input}
-                            value={email}
-                            onChangeText={text => setEmail(text)}
+                        <Image
+                            source={require("@/assets/images/image.png")}
+                            style={styles.logo}
                         />
-                        <TextInput
-                            placeholder="Enter your password"
-                            placeholderTextColor="gray"
-                            style={styles.input}
-                            value={password}
-                            secureTextEntry
-                            onChangeText={text => setPassword(text)}
-                        />
+
+                        <Text style={styles.title}>CineTanger</Text>
+                        <View style={styles.inputContainer}>
+                            <MaterialIcons name="email" size={22} color="gray" />
+                            <TextInput
+                                placeholder="Enter your email"
+                                placeholderTextColor="gray"
+                                style={styles.input}
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <MaterialIcons name="lock" size={22} color="gray" />
+                            <TextInput
+                                placeholder="Enter your password"
+                                placeholderTextColor="gray"
+                                style={styles.input}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry
+                            />
+                        </View>
+
                         <TouchableOpacity
+                            style={styles.button}
                             onPress={handleLogin}
                             disabled={loading}
-                            style={styles.button}
                         >
                             <Text style={styles.buttonText}>
                                 {loading ? "Loading..." : "Login"}
                             </Text>
                         </TouchableOpacity>
+
+                        <Text style={styles.footerText}>
+                            Don’t have an account ?
+                            <Text
+                                style={styles.link}
+                                onPress={() => router.push("/register")}
+                            >
+                                {" "}Sign Up
+                            </Text>
+                        </Text>
                     </View>
                 </View>
             </ImageBackground>
@@ -100,31 +125,80 @@ export default function Login() {
 
 const styles = StyleSheet.create({
     bg: { flex: 1 },
-    overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.5)" },
-    content: { flex: 1, justifyContent: "center", alignItems: "center" },
-    container: { width: "100%", alignItems: "center", marginBottom: 50 },
-    title: { color: "#fff", fontSize: 28, fontFamily: "Knewave_400Regular", marginBottom: 30 },
-    input: {
-        width: 300,
-        height: 50,
-        borderWidth: 1,
-        borderColor: "gray",
-        borderRadius: 15,
-        backgroundColor: "#2d1619",
-        paddingHorizontal: 15,
-        color: "#fff",
-        fontFamily: "Knewave_400Regular",
-        fontSize: 16,
+
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(0,0,0,0.6)",
+    },
+
+    content: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    container: {
+        width: "100%",
+        alignItems: "center",
+        paddingBottom: 40,
+    },
+
+    logo: {
+        width: 120,
+        height: 120,
         marginBottom: 15,
     },
+
+    title: {
+        color: "#fff",
+        fontSize: 28,
+        fontFamily: "Knewave_400Regular",
+        marginBottom: 30,
+    },
+
+    inputContainer: {
+        width: 300,
+        height: 50,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#2d1619",
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: "gray",
+        paddingHorizontal: 15,
+        marginBottom: 15,
+    },
+
+    input: {
+        flex: 1,
+        color: "#fff",
+        marginLeft: 10,
+        fontFamily: "Knewave_400Regular",
+        fontSize: 16,
+    },
+
     button: {
         marginTop: 20,
-        padding: 12,
+        paddingVertical: 12,
         backgroundColor: "#d41132",
         borderRadius: 10,
         width: 300,
         alignItems: "center",
     },
-    buttonText: { color: "#fff", fontSize: 16, fontFamily: "Knewave_400Regular" },
-    logo: { width: 120, height: 120, marginBottom: 20 },
+
+    buttonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontFamily: "Knewave_400Regular",
+    },
+
+    footerText: {
+        marginTop: 15,
+        color: "#fff",
+        fontFamily: "Knewave_400Regular",
+    },
+
+    link: {
+        color: "red",
+    },
 });

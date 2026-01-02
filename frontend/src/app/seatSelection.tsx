@@ -13,8 +13,13 @@ import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMutation } from '@tanstack/react-query';
 import { createReservation, checkSeatAvailability } from '../service/api';
+import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
 
 export default function SeatSelectionScreen() {
+    const [fontsLoaded] = useFonts({
+        "Alkatra-Regular": require("@/src/fonts/Alkatra-VariableFont_wght.ttf"),
+        Knewave_400Regular,
+    });
     const params = useLocalSearchParams<{
         movieId: string;
         movieTitle: string;
@@ -23,7 +28,6 @@ export default function SeatSelectionScreen() {
         pricePerSeat: string;
         availableSeats: string;
     }>();
-
     const [numberOfSeats, setNumberOfSeats] = useState(1);
     const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
@@ -126,7 +130,7 @@ export default function SeatSelectionScreen() {
                         </Text>
                         <View style={styles.sessionInfo}>
                             <View style={styles.infoRow}>
-                                <Feather name="ticket" size={14} color="#aaa" />
+                                {/* <Feather name="tag" size={14} color="#aaa" /> */}
                                 <Text style={styles.infoText}>{pricePerSeat.toFixed(2)} DH per seat</Text>
                             </View>
                         </View>
@@ -268,7 +272,7 @@ const styles = StyleSheet.create({
     },
     movieTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: "Knewave_400Regular",
         color: '#fff',
         marginBottom: 10,
     },
@@ -283,6 +287,7 @@ const styles = StyleSheet.create({
     infoText: {
         color: '#aaa',
         fontSize: 13,
+        fontFamily: "Knewave_400Regular"
     },
     seatSection: {
         marginBottom: 30,
@@ -292,6 +297,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#fff',
         marginBottom: 15,
+        fontFamily: "Knewave_400Regular"
     },
     seatCounter: {
         flexDirection: 'row',
@@ -317,7 +323,7 @@ const styles = StyleSheet.create({
     },
     seatNumber: {
         fontSize: 48,
-        fontWeight: 'bold',
+        fontFamily: "Knewave_400Regular",
         color: '#fff',
     },
     seatLabel: {
@@ -328,6 +334,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#4CAF50',
         fontSize: 13,
+        fontFamily: "Knewave_400Regular"
     },
     priceSection: {
         backgroundColor: '#1A1A1A',
@@ -342,11 +349,13 @@ const styles = StyleSheet.create({
     priceLabel: {
         color: '#aaa',
         fontSize: 14,
+        fontFamily: "Knewave_400Regular"
     },
     priceValue: {
         color: '#fff',
         fontSize: 14,
         fontWeight: '600',
+        fontFamily: "Knewave_400Regular"
     },
     divider: {
         height: 1,
@@ -357,11 +366,12 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: '700',
+        fontFamily: "Knewave_400Regular"
     },
     totalValue: {
         color: '#d41132',
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: "Knewave_400Regular"
     },
     bottomBar: {
         flexDirection: 'row',
@@ -380,7 +390,7 @@ const styles = StyleSheet.create({
     },
     bottomPrice: {
         fontSize: 24,
-        fontWeight: 'bold',
+        fontFamily: "Knewave_400Regular",
         color: '#fff',
     },
     confirmBtn: {
@@ -400,5 +410,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',
+        fontFamily: "Knewave_400Regular"
     },
 });

@@ -1,6 +1,6 @@
 import axios from "axios"
 import { API_URL } from "../constant/Url"
-
+import storageToken from "./storageToken"
 export const registerUser = async (userData: { name: string; email: string; password: string }) => {
     try {
         const response = await axios.post(`${API_URL}/auth/register`, userData, {
@@ -45,28 +45,20 @@ export const getMovieById = async (id: number | string) => {
 };
 
 export const createReservation = async (reservationData: {
-    userId: number;
     showtimeId: number;
     numberOfSeats: number;
 }) => {
-    try {
-        const response = await axios.post(`${API_URL}/reservations`, reservationData);
-        return response;
-    } catch (err) {
-        console.error("Error creating reservation:", err);
-        throw err;
-    }
+    const response = await storageToken.post("/reservations/", reservationData);
+    return response.data;
 };
 
-export const checkSeatAvailability = async (showtimeId: number, numberOfSeats: number) => {
-    try {
-        const response = await axios.post(`${API_URL}/reservations/check-availability`, {
-            showtimeId,
-            numberOfSeats
-        });
-        return response;
-    } catch (err) {
-        console.error("Error checking availability:", err);
-        throw err;
-    }
+export const checkSeatAvailability = async (
+    showtimeId: number,
+    numberOfSeats: number
+) => {
+    const response = await storageToken.post("/reservations/check-availability", {
+        showtimeId,
+        numberOfSeats,
+    });
+    return response.data;
 };
