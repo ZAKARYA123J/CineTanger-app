@@ -1,6 +1,18 @@
 import axios from "axios"
 import { API_URL } from "../constant/Url"
 
+export const registerUser = async (userData: { name: string; email: string; password: string }) => {
+    try {
+        const response = await axios.post(`${API_URL}/auth/register`, userData, {
+            headers: { "Content-Type": "application/json" },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("", error);
+        throw error;
+    }
+};
+
 export const getMovie = async () => {
     const response = await axios.get(`${API_URL}/movies`);
     console.log("Movie response:", response.data);
