@@ -46,13 +46,23 @@ export const login = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Incorrect password" });
         }
 
-        const token = jwt.sign(
-            { id: login.getDataValue("id"), email: login.getDataValue("email"), name: login.getDataValue("name") },
-            JWT_TOKEN,
-            { expiresIn: "7d" }
-        );
+        let token;
+        try {
+            token = jwt.sign(
+                {
+                    id: login.getDataValue("id"),
+                    email: login.getDataValue("email"),
+                    name: login.getDataValue("name")
+                },
+                JWT_TOKEN,
+                { expiresIn: "7d" }
+            );
+        } catch (tokenError) {
+            console.error("Token generation error:", tokenError);
+            return res.status(500).json({ message: "Token generation failed" });
+        }
 
-        return res.status(200).json({ message: "Login successful", login, token });
+        return res.status(200).json({ message: "Login successful", token, login });
 
     } catch (error) {
         console.error(error);
@@ -60,17 +70,17 @@ export const login = async (req: Request, res: Response) => {
     }
 };
 
-export const me=async(req:Request,res:Response)=>{
-try{
-const id=req?.user.id
+export const me = async (req: Request, res: Response) => {
+    try {
+        const id = req?.user.id
 
-const user2=await user.findOne({where:{id:id}})
-if(!user2){
-    res.status(404).send({message:"user not found"})
-}
+        const user2 = await user.findOne({ where: { id: id } })
+        if (!user2) {
+            res.status(404).send({ message: "user not found" })
+        }
 
-}catch(error){
-    console.log(error.message)
-    res.status(500).send({success:false,message:"error list dataof me api"})
-}
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send({ success: false, message: "error list dataof me api" })
+    }
 }

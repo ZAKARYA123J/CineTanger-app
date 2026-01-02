@@ -12,6 +12,20 @@ export const registerUser = async (userData: { name: string; email: string; pass
         throw error;
     }
 };
+export const loginUser = async (userData: { email: string; password: string }) => {
+    try {
+        const response = await axios.post(`${API_URL}/auth/login`, userData, {
+            headers: { "Content-Type": "application/json" },
+        });
+        console.log("Backend response:", response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error("Login error:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+
 
 export const getMovie = async () => {
     const response = await axios.get(`${API_URL}/movies`);
