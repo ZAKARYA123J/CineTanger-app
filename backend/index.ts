@@ -6,8 +6,13 @@ import showtimeRouter from "./src/router/showtimeRouter.js";
 import reservations from "./src/router/reservations.js";
 import movieRouter from "./src/router/movies.js"
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
+import logger, { stream } from './src/config/logger.js';
+import morgan from 'morgan';
 
 export const app = express()
+// Morgan HTTP request logger
+app.use(morgan('combined', { stream }));
+
 app.use(express.json())
 
 
@@ -20,7 +25,7 @@ app.use("/api/timers", showtimeRouter)
 app.use("/api/theaters", theaterRouter)
 app.use("/api/reservations", reservations)
 app.use("/api/movies", movieRouter)
-// Add this before your routes
+
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
@@ -42,5 +47,17 @@ app.get('/', (_req: Request, res: Response) => {
 const PORT = 3000
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`)
-})
+ logger.info(`Server running on http://localhost:${PORT}`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+  // Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+    logger.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason: any) => {
+    logger.error('Unhandled Rejection:', reason);
+    process.exit(1);
+});

@@ -1,141 +1,131 @@
-import type { Request, Response } from "express";
-import reservation from "../models/Reservation.js";
-import showtime from "../models/showtime.js";
-import { calculateAvailableSeats } from "../utils/seatsHelper.js";
+import type { Request, Response } from 'express';
+import Reservation from '../models/Reservation.js';
+import Showtime from '../models/showtime.js';
+import { AppError, asyncHandler } from '../middlewares/errorHandler.js';
+import { calculateAvailableSeats } from '../utils/seatsHelper.js';
 import { generateConfirmationCode } from '../utils/confirmationCodeGenerator.js';
+import logger from '../config/logger.js';
 
-//create a  new reservation 
-export const createReservation = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { showtimeId, numberOfSeats } = req.body;
-    const userId = req.user!.id;
-    //check if show time exists
-    const show = await showtime.findByPk(showtimeId);
-    if (!show) {
-      res.status(400).json({
-        success: false,
-        message: 'Showtime not found'
-      });
-      return;
+// Create reservation
+export const createReservation = asyncHandler(async (req: Request, res: Response) => {
+    const { userId, showtimeId, numberOfSeats } = req.body;
+    
+    logger.info('Creating reservation', { userId, showtimeId, numberOfSeats });
+    
+    // Get showtime
+    const showtime = await Showtime.findByPk(showtimeId);
+    
+    if (!showtime) {
+        logger.warn(`Showtime not found: ${showtimeId}`);
+        throw new AppError('Showtime not found', 404);
     }
-    //check if enough seats are available
-    const availableSeats = await calculateAvailableSeats(showtimeId);
+    
+    // Check seat availability
+    const availableSeats = calculateAvailableSeats(showtime);
+    
+    logger.info(`Available seats for showtime ${showtimeId}: ${availableSeats}`);
+    
     if (availableSeats < numberOfSeats) {
-      res.status(400).json({
-        success: false,
-        message: `Not enough seats available. only ${availableSeats} seats remaining`
-      });
-      return;
+        logger.warn('Insufficient seats', { requested: numberOfSeats, available: availableSeats });
+        throw new AppError('Not enough seats available', 400);
     }
-    //generate unique confirmation code
+    
+    // Generate confirmation code
     const confirmationCode = await generateConfirmationCode();
-    //calculate total price
-    const pricePerSeat = show.get('price') as number;
-    const totalPrice = pricePerSeat * numberOfSeats;
-    //create reservation
-    const newReservation = await reservation.create({
-      userId,
-      showtimeId,
-      numberOfSeats,
-      confirmationCode,
-      totalPrice
+    
+    // Calculate total price
+    const totalPrice = showtime.get('price') as number * numberOfSeats;
+    
+    // Create reservation
+    const reservation = await Reservation.create({
+        userId,
+        showtimeId,
+        numberOfSeats,
+        confirmationCode,
+        totalPrice
     });
-    //update booked seats in showtime 
-    const currentBooked = show.get('bookedSeats') as number;
-    await show.update({
-      bookedSeats: currentBooked + numberOfSeats
+    
+    // Update booked seats
+    const currentBookedSeats = showtime.get('bookedSeats') as number;
+    await showtime.update({
+        bookedSeats: currentBookedSeats + numberOfSeats
     });
-
+    
+    logger.info(`Reservation created successfully`, {
+        confirmationCode,
+        reservationId: reservation.get('id'),
+        totalPrice
+    });
+    
     res.status(201).json({
-      success: true,
-      message: 'Reservation created successfully',
-      data: newReservation
+        success: true,
+        message: 'Reservation created successfully',
+        data: reservation
     });
-  } catch (error) {
-    console.error('Error creating reservation:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while creating reservation',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-};
-//get reservation by confirmation code 
-export const getReservationByCode = async (req: Request, res: Response): Promise<void> => {
-  try {
+});
+
+// Get reservation by confirmation code
+export const getReservationByCode = asyncHandler(async (req: Request, res: Response) => {
     const { code } = req.params;
-
-    const reservationData = await reservation.findOne({
-      where: { confirmationCode: code }
+    
+    logger.info(`Fetching reservation with code: ${code}`);
+    
+    const reservation = await Reservation.findOne({
+        where: { confirmationCode: code }
     });
-    if (!reservationData) {
-      res.status(404).json({
-        success: false,
-        message: `Reservation with code ${code} not found`
-      });
-      return;
+    
+    if (!reservation) {
+        logger.warn(`Reservation not found with code: ${code}`);
+        throw new AppError('Reservation not found', 404);
     }
-
+    
+    logger.info(`Reservation found: ${code}`);
+    
     res.status(200).json({
-      success: true,
-      data: reservationData
+        success: true,
+        data: reservation
     });
-  } catch (error) {
-    console.error('Error fetching reservation:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching reservation',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-};
-//cancel reservation 
-export const cancelReservation = async (req: Request, res: Response): Promise<void> => {
-  try {
+});
+
+// Cancel reservation
+export const cancelReservation = asyncHandler(async (req: Request, res: Response) => {
     const { code } = req.params;
-    //find reservation 
-    const reservationData = await reservation.findOne({
-      where: { confirmationCode: code }
+    
+    logger.info(`Cancelling reservation with code: ${code}`);
+    
+    // Find reservation
+    const reservation = await Reservation.findOne({
+        where: { confirmationCode: code }
     });
-    if (!reservationData) {
-      res.status(404).json({
-        success: false,
-        message: `Reservation with code ${code} not found`
-      });
-      return;
+    
+    if (!reservation) {
+        logger.warn(`Reservation not found for cancellation: ${code}`);
+        throw new AppError('Reservation not found', 404);
     }
-    if (!reservationData) {
-      res.status(404).json({
-        success: false,
-        message: `Reservation with code ${code} not found`
-      });
-      return;
+    
+    // Get showtime to release seats
+    const showtimeId = reservation.get('showtimeId') as number;
+    const numberOfSeats = reservation.get('numberOfSeats') as number;
+    
+    const showtime = await Showtime.findByPk(showtimeId);
+    
+    if (showtime) {
+        const currentBookedSeats = showtime.get('bookedSeats') as number;
+        await showtime.update({
+            bookedSeats: Math.max(0, currentBookedSeats - numberOfSeats)
+        });
+        
+        logger.info(`Released ${numberOfSeats} seats for showtime ${showtimeId}`);
     }
-    const showtimeId = reservationData.get('showtimeId') as number;
-    const numberOfSeats = reservationData.get('numberOfSeats') as number;
-    //Release seats back to showtime
-    const show = await showtime.findByPk(showtimeId);
-    if (show) {
-      const currentBooked = show.get('bookedSeats') as number;
-      await show.update({
-        bookedSeats: Math.max(0, currentBooked - numberOfSeats)
-      });
-    }
-    //delete reservation
-    await reservationData.destroy();
-
+    
+    // Delete reservation
+    await reservation.destroy();
+    
+    logger.info(`Reservation cancelled successfully: ${code}`);
+    
     res.status(200).json({
-      success: true,
-      message: 'Reservation cancelled successfully',
-      data: {}
+        success: true,
+        message: 'Reservation cancelled successfully',
+        data: {}
     });
-  } catch (error) {
-    console.error('Error cancelling reservation:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while cancelling reservation',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-};
-
+});
