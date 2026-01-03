@@ -1,174 +1,142 @@
-import type { Request, Response } from 'express';
-import Reservation from '../models/Reservation.js';
-import Showtime from '../models/showtime.js';
-import { AppError, asyncHandler } from '../middlewares/errorHandler.js';
-import { calculateAvailableSeats, calculateAvailableSeatsFromValues } from '../utils/seatsHelper.js';
-import { generateConfirmationCode } from '../utils/confirmationCodeGenerator.js';
-import logger from '../config/logger.js';
+import { Request, Response } from "express";
+import Reservation from "../models/Reservation.js";
+import Showtime from "../models/showtime.js";
+import Movie from "../models/Movie.js";
+import Theater from "../models/theater.js";
+import { calculateAvailableSeatsFromValues } from "../utils/seatsHelper.js";
+import { generateConfirmationCode } from "../utils/confirmationCodeGenerator.js";
+import logger from "../config/logger.js";
 
-// Create reservation
-export const createReservation = asyncHandler(async (req: Request, res: Response) => {
-  const { userId, showtimeId, numberOfSeats } = req.body;
-
-  logger.info('Creating reservation', { userId, showtimeId, numberOfSeats });
-
-  // Validate input
-  if (!userId || !showtimeId || !numberOfSeats) {
-    throw new AppError('userId, showtimeId, and numberOfSeats are required', 400);
-  }
-
-  // Get showtime
-  const showtime = await Showtime.findByPk(showtimeId);
-
-  if (!showtime) {
-    logger.warn(`Showtime not found: ${showtimeId}`);
-    throw new AppError('Showtime not found', 404);
-  }
-
-  // Check seat availability - FIX: pass showtimeId, not capacity
-  const totalSeats = showtime.get('totalSeats') as number;
-  const bookedSeats = showtime.get('bookedSeats') as number;
-  const availableSeats = calculateAvailableSeatsFromValues(totalSeats, bookedSeats);
-
-  logger.info(`Available seats for showtime ${showtimeId}: ${availableSeats}`);
-
-  if (availableSeats < numberOfSeats) {
-    logger.warn('Insufficient seats', { requested: numberOfSeats, available: availableSeats });
-    throw new AppError('Not enough seats available', 400);
-  }
-
-  // Generate confirmation code
-  const confirmationCode = await generateConfirmationCode();
-
-  // Calculate total price - FIX: correct multiplication syntax
-  const price = showtime.get('price') as number;
-  const totalPrice = price * numberOfSeats;
-
-  // Create reservation
-  const reservation = await Reservation.create({
-    userId,
-    showtimeId,
-    numberOfSeats,
-    confirmationCode,
-    totalPrice
-  });
-
-  // Update booked seats
-  const currentBookedSeats = showtime.get('bookedSeats') as number;
-  await showtime.update({
-    bookedSeats: currentBookedSeats + numberOfSeats
-  });
-
-  logger.info(`Reservation created successfully`, {
-    confirmationCode,
-    reservationId: reservation.get('id'),
-    totalPrice
-  });
-
-  res.status(201).json({
-    success: true,
-    message: 'Reservation created successfully',
-    data: reservation
-  });
-});
-
-// Get reservation by confirmation code
-export const getReservationByCode = asyncHandler(async (req: Request, res: Response) => {
-  const { code } = req.params;
-
-  logger.info(`Fetching reservation with code: ${code}`);
-
-  const reservation = await Reservation.findOne({
-    where: { confirmationCode: code }
-  });
-
-  if (!reservation) {
-    logger.warn(`Reservation not found with code: ${code}`);
-    throw new AppError('Reservation not found', 404);
-  }
-
-  logger.info(`Reservation found: ${code}`);
-
-  res.status(200).json({
-    success: true,
-    data: reservation
-  });
-});
-
-// Cancel reservation
-export const cancelReservation = asyncHandler(async (req: Request, res: Response) => {
-  const { code } = req.params;
-
-  logger.info(`Cancelling reservation with code: ${code}`);
-
-  // Find reservation
-  const reservation = await Reservation.findOne({
-    where: { confirmationCode: code }
-  });
-
-  if (!reservation) {
-    logger.warn(`Reservation not found for cancellation: ${code}`);
-    throw new AppError('Reservation not found', 404);
-  }
-
-  // Get showtime to release seats
-  const showtimeId = reservation.get('showtimeId') as number;
-  const numberOfSeats = reservation.get('numberOfSeats') as number;
-
-  const showtime = await Showtime.findByPk(showtimeId);
-
-  if (showtime) {
-    const currentBookedSeats = showtime.get('bookedSeats') as number;
-    await showtime.update({
-      bookedSeats: Math.max(0, currentBookedSeats - numberOfSeats)
-    });
-
-    logger.info(`Released ${numberOfSeats} seats for showtime ${showtimeId}`);
-  }
-
-  // Delete reservation
-  await reservation.destroy();
-
-  logger.info(`Reservation cancelled successfully: ${code}`);
-
-  res.status(200).json({
-    success: true,
-    message: 'Reservation cancelled successfully',
-    data: {}
-  });
-});
-
-// Check seat availability
-export const checkSeatAvailability = asyncHandler(
-  async (req: Request, res: Response) => {
+export const createReservation = async (req: Request & { user?: { id: number } }, res: Response) => {
+  try {
     const { showtimeId, numberOfSeats } = req.body;
+    const userId = req.user?.id;
 
-    logger.info("Checking seat availability", {
-      showtimeId,
-      numberOfSeats,
-    });
-
-    if (!showtimeId) {
-      throw new AppError("Showtime ID is required", 400);
+    if (!userId || !showtimeId || !numberOfSeats) {
+      return res.status(400).json({ success: false, message: "userId, showtimeId, and numberOfSeats are required" });
     }
 
     const showtime = await Showtime.findByPk(showtimeId);
-
     if (!showtime) {
-      logger.warn(`Showtime not found: ${showtimeId}`);
-      throw new AppError("Showtime not found", 404);
+      return res.status(404).json({ success: false, message: "Showtime not found" });
     }
 
-    const totalSeats = showtime.get('totalSeats') as number;
-    const bookedSeats = showtime.get('bookedSeats') as number;
+    const totalSeats = showtime.get("totalSeats") as number;
+    const bookedSeats = showtime.get("bookedSeats") as number;
     const availableSeats = calculateAvailableSeatsFromValues(totalSeats, bookedSeats);
 
-    logger.info(`Available seats: ${availableSeats}`);
+    if (availableSeats < numberOfSeats) {
+      return res.status(400).json({ success: false, message: "Not enough seats available", availableSeats });
+    }
 
-    res.status(200).json({
+    const confirmationCode = await generateConfirmationCode();
+    const price = showtime.get("price") as number;
+    const totalPrice = price * numberOfSeats;
+
+    const reservation = await Reservation.create({
+      userId,
+      showtimeId,
+      numberOfSeats,
+      confirmationCode,
+      totalPrice
+    });
+
+    await showtime.update({ bookedSeats: bookedSeats + numberOfSeats });
+
+    logger.info("Reservation created", { userId, showtimeId, confirmationCode });
+
+    return res.status(201).json({
+      success: true,
+      message: "Reservation created successfully",
+      data: reservation
+    });
+  } catch (error) {
+    console.error("Create reservation error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const getReservationByCode = async (req: Request, res: Response) => {
+  try {
+    const { code } = req.params;
+    const reservation = await Reservation.findOne({ where: { confirmationCode: code } });
+
+    if (!reservation) return res.status(404).json({ success: false, message: "Reservation not found" });
+
+    return res.status(200).json({ success: true, data: reservation });
+  } catch (error) {
+    console.error("Get reservation error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const cancelReservation = async (req: Request, res: Response) => {
+  try {
+    const { code } = req.params;
+    const reservation = await Reservation.findOne({ where: { confirmationCode: code } });
+
+    if (!reservation) return res.status(404).json({ success: false, message: "Reservation not found" });
+
+    const showtime = await Showtime.findByPk(reservation.get("showtimeId") as number);
+    if (showtime) {
+      const currentBookedSeats = showtime.get("bookedSeats") as number;
+      const numberOfSeats = reservation.get("numberOfSeats") as number;
+      await showtime.update({ bookedSeats: Math.max(0, currentBookedSeats - numberOfSeats) });
+    }
+
+    await reservation.destroy();
+    return res.status(200).json({ success: true, message: "Reservation cancelled successfully" });
+  } catch (error) {
+    console.error("Cancel reservation error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const checkSeatAvailability = async (req: Request, res: Response) => {
+  try {
+    const { showtimeId, numberOfSeats } = req.body;
+    if (!showtimeId) return res.status(400).json({ success: false, message: "Showtime ID is required" });
+
+    const showtime = await Showtime.findByPk(showtimeId);
+    if (!showtime) return res.status(404).json({ success: false, message: "Showtime not found" });
+
+    const totalSeats = showtime.get("totalSeats") as number;
+    const bookedSeats = showtime.get("bookedSeats") as number;
+    const availableSeats = calculateAvailableSeatsFromValues(totalSeats, bookedSeats);
+
+    return res.status(200).json({
       success: true,
       available: availableSeats >= numberOfSeats,
       availableSeats,
     });
+  } catch (error) {
+    console.error("Check seats error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
-);
+};
+
+export const getUserReservations = async (req: Request & { user?: { id: number } }, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const reservations = await Reservation.findAll({
+      where: { userId },
+      include: [
+        {
+          model: Showtime,
+          include: [
+            { model: Movie, attributes: ["title", "photo", "duration"] },
+            { model: Theater, attributes: ["name", "title"] }
+          ]
+        }
+      ],
+      order: [["createdAt", "DESC"]]
+    });
+
+    return res.status(200).json({ success: true, data: reservations });
+  } catch (error) {
+    console.error("Get user reservations error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

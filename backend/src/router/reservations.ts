@@ -1,26 +1,24 @@
-import express from 'express';
+import express from "express";
 import {
   createReservation,
   getReservationByCode,
   cancelReservation,
   checkSeatAvailability,
-} from '../controllers/reservations.js';
+  getUserReservations,
+} from "../controllers/reservations.js";
+import authMiddleware from "../middlewares/authmiddlewares.js";
 import {
   validateCreateReservation,
   validateConfirmationCode
-} from '../validation/reservationValidation.js';
-import authmiddlewares from "../middlewares/authmiddlewares.js"
+} from "../validation/reservationValidation.js";
 
-const router: any = express.Router();
+const router = express.Router();
 
-//create a new reservation  with validation and seat availability
-router.post('/', validateCreateReservation, authmiddlewares, createReservation);
-// Get reservation by confirmation code
-router.get('/:code', validateConfirmationCode, authmiddlewares, getReservationByCode);
-// Cancel reservation by confirmation code
-// Cancel reservation by confirmation code
-router.delete('/:code', validateConfirmationCode, authmiddlewares, cancelReservation);
-// Check seat availability
-router.post('/check-availability', authmiddlewares, checkSeatAvailability);
+router.post("/", validateCreateReservation, authMiddleware, createReservation);
+router.post("/check-availability", authMiddleware, checkSeatAvailability);
+router.get("/my-reservations", authMiddleware, getUserReservations);
+
+router.get("/:code", validateConfirmationCode, authMiddleware, getReservationByCode);
+router.delete("/:code", validateConfirmationCode, authMiddleware, cancelReservation);
 
 export default router;

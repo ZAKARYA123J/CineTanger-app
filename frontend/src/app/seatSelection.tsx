@@ -68,12 +68,12 @@ export default function SeatSelectionScreen() {
                 numberOfSeats
             );
 
-            if (response.data.isAvailable) {
+            if (response.available) {
                 handleConfirmBooking();
             } else {
                 Alert.alert(
                     'Not Enough Seats',
-                    `Only ${response.data.availableSeats} seats available. Please select fewer seats.`
+                    `Only ${response.availableSeats} seats available. Please select fewer seats.`
                 );
             }
         } catch (error: any) {

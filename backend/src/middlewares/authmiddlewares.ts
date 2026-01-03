@@ -1,23 +1,39 @@
-import dotenv from "dotenv"
-dotenv.config()
-import jwt from "jsonwebtoken"
-import { Request, Response } from "express"
+import dotenv from "dotenv";
+dotenv.config();
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+
 const JWT_TOKEN = process.env.JWT_TOKEN;
-const validationMiddlewares = async (req: any, res: Response, next: any) => {
+
+interface JwtPayload {
+    id: number;
+    email: string;
+    [key: string]: any;
+}
+
+const authMiddleware = (req: Request & { user?: JwtPayload }, res: Response, next: NextFunction) => {
     try {
-        const authheader = req.headers.authorization
-        if (!authheader) {
-            return res.status(400).json({ message: "no token" })
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ success: false, message: "Token missing" });
         }
-        const valideToken = authheader.split("Bearer ")[1]
-        if (!valideToken) {
-            return res.status(401).json({ message: "Invalid token format" })
+
+        const token = authHeader.split("Bearer ")[1];
+        if (!token) {
+            return res.status(401).json({ success: false, message: "Invalid token format" });
         }
-        const valid = jwt.verify(valideToken, JWT_TOKEN)
-        req.user = valid;
+
+        const decoded = jwt.verify(token, JWT_TOKEN) as JwtPayload;
+        if (!decoded || !decoded.id) {
+            return res.status(401).json({ success: false, message: "Invalid token payload" });
+        }
+
+        req.user = decoded;
         next();
     } catch (error) {
-        return res.status(400).json({ message: "Unauthorized" })
+        console.error("Auth error:", error);
+        return res.status(401).json({ success: false, message: "Unauthorized" });
     }
-}
-export default validationMiddlewares;
+};
+
+export default authMiddleware;

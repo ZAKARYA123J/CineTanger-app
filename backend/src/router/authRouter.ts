@@ -1,5 +1,4 @@
 import { register, login } from "../controllers/authControllers.js"
-import validationMiddlewares from "../middlewares/authmiddlewares.js"
 import express from "express"
 const router = express.Router()
 

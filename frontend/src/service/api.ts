@@ -77,3 +77,13 @@ export const checkSeatAvailability = async (
         throw error;
     }
 };
+
+export const getUserReservations: () => Promise<any> = async () => {
+    try {
+        const response = await storageToken.get(`/reservations/my-reservations`);
+        return response.data;
+    } catch (error: any) {
+        console.error("Get user reservations error:", error.response?.data || error.message);
+        throw error;
+    }
+};
