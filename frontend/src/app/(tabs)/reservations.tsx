@@ -180,7 +180,6 @@ const styles = StyleSheet.create({
   movieTitleTicket: {
     fontSize: 16,
     color: '#fff',
-    fontWeight: 'bold',
     fontFamily: 'Knewave_400Regular',
     flex: 1,
   },
@@ -193,10 +192,11 @@ const styles = StyleSheet.create({
   statusText: {
     color: '#fff',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: "Knewave_400Regular",
   },
   ticketContent: {
     flexDirection: 'row',
+    fontFamily: "Knewave_400Regular",
     padding: 15,
     gap: 15,
   },
@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   detailText: {
+    fontFamily: "Knewave_400Regular",
     color: '#ccc',
     fontSize: 13,
   },
@@ -236,18 +237,19 @@ const styles = StyleSheet.create({
   label: {
     color: '#666',
     fontSize: 11,
+    fontFamily: "Knewave_400Regular",
     marginBottom: 4,
   },
   code: {
     color: '#d41132',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: "Knewave_400Regular",
     letterSpacing: 1,
   },
   price: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: "Knewave_400Regular",
   },
   emptyState: {
     flex: 1,

@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams, router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
 export default function ConfirmationScreen() {
     const params = useLocalSearchParams<{
         confirmationCode: string;
@@ -32,14 +33,15 @@ export default function ConfirmationScreen() {
         }
     };
 
-    const handleGoHome = () => {
-        router.push('/(tabs)');
-    };
 
     const handleViewReservations = () => {
         router.push('/(tabs)/reservations');
     };
 
+    const [fontsLoaded] = useFonts({
+        "Alkatra-Regular": require("@/src/fonts/Alkatra-VariableFont_wght.ttf"),
+        Knewave_400Regular,
+    });
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -112,7 +114,7 @@ export default function ConfirmationScreen() {
                         <Text style={styles.cardTitle}>Selected Seats</Text>
                         <View style={styles.seatsInfo}>
                             <View style={styles.seatsRow}>
-                                <Feather name="users" size={20} color="#2563EB" />
+                                <Feather name="users" size={20} color="#d41132" />
                                 <Text style={styles.seatsNumber}>{params.numberOfSeats}</Text>
                                 <Text style={styles.seatsLabel}>
                                     {parseInt(params.numberOfSeats) === 1 ? 'Seat' : 'Seats'}
@@ -151,16 +153,16 @@ export default function ConfirmationScreen() {
                 {/* Action Buttons */}
                 <View style={styles.actionsSection}>
                     <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
-                        <Feather name="share-2" size={20} color="#2563EB" />
+                        <Feather name="share-2" size={20} color="#d41132" />
                         <Text style={styles.shareBtnText}>Share Booking</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.primaryBtn} onPress={handleViewReservations}>
-                        <Feather name="ticket" size={20} color="#fff" />
+                        <Feather name="file-text" size={20} color="#fff" />
                         <Text style={styles.primaryBtnText}>View My Tickets</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.secondaryBtn} onPress={handleGoHome}>
+                    <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.push("/(tabs)/filmScreen")}>
                         <Text style={styles.secondaryBtnText}>Back to Home</Text>
                     </TouchableOpacity>
                 </View>
@@ -201,7 +203,7 @@ const styles = StyleSheet.create({
     },
     successTitle: {
         fontSize: 28,
-        fontWeight: 'bold',
+        fontFamily: "Knewave_400Regular",
         color: '#fff',
         marginBottom: 8,
     },
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#aaa',
         textAlign: 'center',
+        fontFamily: "Knewave_400Regular",
         paddingHorizontal: 20,
     },
     codeSection: {
@@ -218,6 +221,7 @@ const styles = StyleSheet.create({
     codeLabel: {
         fontSize: 14,
         color: '#aaa',
+        fontFamily: "Knewave_400Regular",
         marginBottom: 10,
     },
     codeBox: {
@@ -226,18 +230,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         borderRadius: 12,
         borderWidth: 2,
-        borderColor: '#2563EB',
+        borderColor: '#d41132',
+        fontFamily: "Knewave_400Regular",
         marginBottom: 10,
     },
     codeText: {
         fontSize: 32,
-        fontWeight: 'bold',
-        color: '#2563EB',
+        color: '#d41132',
+        fontFamily: "Knewave_400Regular",
         letterSpacing: 2,
     },
     codeHint: {
         fontSize: 12,
         color: '#888',
+        fontFamily: "Knewave_400Regular",
         textAlign: 'center',
         paddingHorizontal: 30,
     },
@@ -247,6 +253,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
+        fontFamily: "Knewave_400Regular",
         color: '#fff',
         marginBottom: 15,
     },
@@ -268,7 +275,7 @@ const styles = StyleSheet.create({
     },
     movieTitle: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: "Knewave_400Regular",
         color: '#fff',
         marginBottom: 12,
     },
@@ -280,6 +287,7 @@ const styles = StyleSheet.create({
     },
     detailLabel: {
         color: '#888',
+        fontFamily: "Knewave_400Regular",
         fontSize: 13,
         flex: 1,
     },
@@ -298,6 +306,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         color: '#fff',
+        fontFamily: "Knewave_400Regular",
         marginBottom: 12,
     },
     seatsInfo: {
@@ -307,21 +316,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-        backgroundColor: '#0f1729',
+        backgroundColor: '#1A1A1A',
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 25,
         borderWidth: 1,
-        borderColor: '#2563EB',
+        borderColor: '#d41132',
+        fontFamily: "Knewave_400Regular",
     },
     seatsNumber: {
         fontSize: 24,
-        fontWeight: 'bold',
-        color: '#2563EB',
+        fontFamily: "Knewave_400Regular",
+        color: '#d41132',
     },
     seatsLabel: {
         fontSize: 14,
         color: '#aaa',
+        fontFamily: "Knewave_400Regular",
     },
     paymentCard: {
         backgroundColor: '#1A1A1A',
@@ -336,11 +347,13 @@ const styles = StyleSheet.create({
     paymentLabel: {
         color: '#aaa',
         fontSize: 14,
+        fontFamily: "Knewave_400Regular",
     },
     paymentValue: {
         color: '#fff',
         fontSize: 14,
         fontWeight: '600',
+        fontFamily: "Knewave_400Regular",
     },
     divider: {
         height: 1,
@@ -349,13 +362,13 @@ const styles = StyleSheet.create({
     },
     totalLabel: {
         color: '#fff',
+        fontFamily: "Knewave_400Regular",
         fontSize: 16,
-        fontWeight: '700',
     },
     totalValue: {
-        color: '#2563EB',
+        fontFamily: "Knewave_400Regular",
+        color: '#d41132',
         fontSize: 20,
-        fontWeight: 'bold',
     },
     actionsSection: {
         gap: 12,
@@ -370,10 +383,10 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         gap: 8,
         borderWidth: 2,
-        borderColor: '#2563EB',
+        borderColor: '#d41132',
     },
     shareBtnText: {
-        color: '#2563EB',
+        color: '#d41132',
         fontSize: 16,
         fontWeight: '600',
     },
@@ -381,7 +394,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#2563EB',
+        backgroundColor: '#d41132',
         paddingVertical: 14,
         borderRadius: 25,
         gap: 8,
