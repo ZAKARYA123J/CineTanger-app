@@ -1,6 +1,7 @@
 import axios from "axios"
 import { API_URL } from "../constant/Url"
 import storageToken from "./storageToken"
+
 export const registerUser = async (userData: { name: string; email: string; password: string }) => {
     try {
         const response = await axios.post(`${API_URL}/auth/register`, userData, {
@@ -8,10 +9,11 @@ export const registerUser = async (userData: { name: string; email: string; pass
         });
         return response.data;
     } catch (error: any) {
-        console.error("", error);
+        console.error("Register error:", error);
         throw error;
     }
 };
+
 export const loginUser = async (userData: { email: string; password: string }) => {
     try {
         const response = await axios.post(`${API_URL}/auth/login`, userData, {
@@ -25,12 +27,15 @@ export const loginUser = async (userData: { email: string; password: string }) =
     }
 };
 
-
-
 export const getMovie = async () => {
-    const response = await axios.get(`${API_URL}/movies`);
-    console.log("Movie response:", response.data);
-    return response.data;
+    try {
+        const response = await axios.get(`${API_URL}/movies`);
+        console.log("Movie response:", response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error("Get movies error:", error);
+        throw error;
+    }
 };
 
 export const getMovieById = async (id: number | string) => {
@@ -48,17 +53,27 @@ export const createReservation = async (reservationData: {
     showtimeId: number;
     numberOfSeats: number;
 }) => {
-    const response = await storageToken.post("/reservations/", reservationData);
-    return response.data;
+    try {
+        const response = await storageToken.post(`/reservations/`, reservationData);
+        return response.data;
+    } catch (error: any) {
+        console.error("Create reservation error:", error);
+        throw error;
+    }
 };
 
 export const checkSeatAvailability = async (
     showtimeId: number,
     numberOfSeats: number
 ) => {
-    const response = await storageToken.post("/reservations/check-availability", {
-        showtimeId,
-        numberOfSeats,
-    });
-    return response.data;
+    try {
+        const response = await storageToken.post(`/reservations/check-availability`, {
+            showtimeId,
+            numberOfSeats,
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Check seat availability error:", error);
+        throw error;
+    }
 };

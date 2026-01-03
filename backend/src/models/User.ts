@@ -22,21 +22,21 @@ const user = sequelize.define("User", {
     },
     role: {
         type: DataTypes.STRING,
-        allowNull:false,
-         validate: {
-      isIn: [['Admin', 'User']] // Add validation instead of ENUM
-    },
+        allowNull: false,
+        validate: {
+            isIn: [['Admin', 'User']]
+        },
         defaultValue: "User"
     }
 }, {
     tableName: "users",
     timestamps: true,
 })
-user.beforeCreate(async (instance:any) => {
+user.beforeCreate(async (instance: any) => {
     instance.password = await bcrypt.hash(instance.password, 10);
 });
 
-user.beforeUpdate(async (instance:any) => {
+user.beforeUpdate(async (instance: any) => {
     if (instance.changed("password")) {
         instance.password = await bcrypt.hash(instance.password, 10);
     }

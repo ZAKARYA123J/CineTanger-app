@@ -1,5 +1,8 @@
 import { sequelize } from "../config/Database.js";
 import { DataTypes } from "sequelize";
+import user from "./User.js";
+import showtime from "./showtime.js";
+
 const reservation = sequelize.define("Reservation", {
     id: {
         type: DataTypes.INTEGER,
@@ -10,7 +13,7 @@ const reservation = sequelize.define("Reservation", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "User",
+            model: "users",
             key: "id"
         }
     },
@@ -18,7 +21,7 @@ const reservation = sequelize.define("Reservation", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "Showtime",
+            model: "showtimes",
             key: "id"
         }
     },
@@ -32,11 +35,18 @@ const reservation = sequelize.define("Reservation", {
         unique: true
     },
     totalPrice: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     }
 }, {
-    tableName: "Reservation",
+    tableName: "reservations",
     timestamps: true
-})
+});
+
+reservation.belongsTo(user, { foreignKey: "userId" });
+reservation.belongsTo(showtime, { foreignKey: "showtimeId" });
+
+user.hasMany(reservation, { foreignKey: "userId" });
+showtime.hasMany(reservation, { foreignKey: "showtimeId" });
+
 export default reservation;

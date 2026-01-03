@@ -3,7 +3,7 @@ import {
   createReservation,
   getReservationByCode,
   cancelReservation,
-  checkAvailability
+  checkSeatAvailability,
 } from '../controllers/reservations.js';
 import {
   validateCreateReservation,
@@ -21,6 +21,6 @@ router.get('/:code', validateConfirmationCode, authmiddlewares, getReservationBy
 // Cancel reservation by confirmation code
 router.delete('/:code', validateConfirmationCode, authmiddlewares, cancelReservation);
 // Check seat availability
-router.post('/check-availability', authmiddlewares, checkAvailability);
+router.post('/check-availability', authmiddlewares, checkSeatAvailability);
 
 export default router;
