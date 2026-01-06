@@ -47,7 +47,7 @@ export default function Login() {
             await setToken(res.token);
 
             Alert.alert("Success", "Logged in successfully!");
-            router.replace("/(tabs)/filmScreen");
+            router.replace("/filmScreen");
         } catch (error: any) {
             Alert.alert("Login Error", error.message);
         } finally {
