@@ -1,18 +1,17 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Share,
-  ScrollView,
-} from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect } from "react";
+import {
+  Image,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect } from "react";
-import { saveReservation, Reservation } from "../service/reservationStorage";
+import { Reservation, saveReservation } from "../service/reservationStorage";
 export default function ConfirmationScreen() {
   const params = useLocalSearchParams<{
     confirmationCode: string;
@@ -20,6 +19,9 @@ export default function ConfirmationScreen() {
     moviePhoto: string;
     hallName: string;
     time: string;
+    date: string;
+    movieId: string;
+    showtimeId:string;
     numberOfSeats: string;
     totalPrice: string;
   }>();
@@ -64,11 +66,13 @@ export default function ConfirmationScreen() {
   };
 
   const handleGoHome = () => {
-    router.push("/(tabs)/");
+    router.push("/");
   };
 
+
+
   const handleViewReservations = () => {
-    router.push("/(tabs)/reservations");
+    router.push("/reservations");
   };
 
   return (

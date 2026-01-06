@@ -1,6 +1,7 @@
-import axios from "axios"
-import { API_URL } from "../constant/Url"
-import storageToken from "./storageToken"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { API_URL } from "../constant/Url";
+import storageToken from "./storageToken";
 
 export const registerUser = async (userData: { name: string; email: string; password: string }) => {
     try {
@@ -30,10 +31,13 @@ export const loginUser = async (userData: { email: string; password: string }) =
 export const getMovie = async () => {
     try {
         const response = await axios.get(`${API_URL}/movies`);
-        console.log("Movie response:", response.data);
+        await AsyncStorage.setItem('@cinetanger_movies', JSON.stringify(response.data));
         return response.data;
     } catch (error: any) {
-        console.error("Get movies error:", error);
+        try {
+            const cached = await AsyncStorage.getItem('@cinetanger_movies');
+            if (cached) return JSON.parse(cached);
+        } catch {}
         throw error;
     }
 };
@@ -41,14 +45,31 @@ export const getMovie = async () => {
 export const getMovieById = async (id: number | string) => {
     try {
         const response = await axios.get(`${API_URL}/movies/${id}`);
-        console.log("MovieById response:", response.data);
-        return response.data.data;
+        const movie = response.data.data;
+        await AsyncStorage.setItem(`@cinetanger_movie_${id}`, JSON.stringify(movie));
+        return movie;
     } catch (err) {
-        console.error("Error fetching movie by id:", err);
+        try {
+            const cached = await AsyncStorage.getItem(`@cinetanger_movie_${id}`);
+            if (cached) return JSON.parse(cached);
+            const list = await AsyncStorage.getItem('@cinetanger_movies');
+            if (list) {
+                const parsed = JSON.parse(list);
+                const found = Array.isArray(parsed?.data)
+                    ? parsed.data.find((m: any) => String(m.id) === String(id))
+                    : Array.isArray(parsed)
+                    ? parsed.find((m: any) => String(m.id) === String(id))
+                    : null;
+                if (found) return found;
+            }
+        } catch {}
         throw err;
     }
 };
-
+export const cancelReservation = async (confirmationCode: string) => {
+    const response = await axios.delete(`${API_URL}/reservations/${confirmationCode}`);
+    return response.data;
+}
 export const createReservation = async (reservationData: {
     showtimeId: number;
     numberOfSeats: number;

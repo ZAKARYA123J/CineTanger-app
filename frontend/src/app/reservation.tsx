@@ -1,27 +1,27 @@
-import React, { useState, useCallback } from 'react';
+import { Feather } from '@expo/vector-icons';
+import { useMutation } from '@tanstack/react-query';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    TextInput,
-    TouchableOpacity,
-    RefreshControl,
     ActivityIndicator,
     Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, router } from 'expo-router';
-import { useMutation } from '@tanstack/react-query';
 import { ReservationCard } from '../../components/ui/reservation/reservation/ReservationCard';
+import { cancelReservation as cancelReservationAPI } from '../service/api';
 import {
     getAllReservations,
+    Reservation,
     searchReservations,
     updateReservationStatus,
-    Reservation,
 } from '../service/reservationStorage';
-import { cancelReservation as cancelReservationAPI } from '../service/api';
 
 export default function ReservationsScreen() {
     const [reservations, setReservations] = useState<Reservation[]>([]);

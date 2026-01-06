@@ -2,6 +2,7 @@ import axios from "axios";
 import { API_URL } from "../constant/Url";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import { useAuthStore } from "../store/auth";
 
 const api = axios.create({
     baseURL: API_URL,
@@ -12,7 +13,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem("@user_token");
+        const token = useAuthStore.getState().token;
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -23,22 +24,19 @@ api.interceptors.request.use(
 
 export const getUserIdFromToken = async (): Promise<number | null> => {
     try {
-        const token = await AsyncStorage.getItem("@user_token");
+        const token = useAuthStore.getState().token || (await AsyncStorage.getItem("@user_token"));
         if (!token) {
-            console.warn("No token found");
             return null;
         }
-
         const decoded: any = jwtDecode(token);
         return decoded.id || null;
     } catch (error) {
-        console.error("Error decoding token:", error);
         return null;
     }
 };
 
 export const clearAuthToken = async () => {
-    await AsyncStorage.removeItem("@user_token");
+    await useAuthStore.getState().clearToken();
 };
 
 export const registerUser = async (userData: {
@@ -75,7 +73,7 @@ export const loginUser = async (userData: {
         );
 
         if (response.data.token) {
-            await AsyncStorage.setItem("@user_token", response.data.token);
+            await useAuthStore.getState().setToken(response.data.token);
         }
 
         console.log("Login successful:", response.data);

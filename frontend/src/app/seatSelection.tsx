@@ -1,18 +1,19 @@
+import { Feather } from '@expo/vector-icons';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Image,
-    Alert,
     ActivityIndicator,
+    Alert,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { createReservation, checkSeatAvailability } from '../service/api';
+import { checkSeatAvailability, createReservation } from '../service/api';
+import { enqueueReservationRequest, PendingReservationRequest } from '../service/reservationStorage';
 
 export default function SeatSelectionScreen() {
     const params = useLocalSearchParams<{
@@ -99,12 +100,38 @@ export default function SeatSelectionScreen() {
     };
 
     // Confirm booking
-    const handleConfirmBooking = () => {
-        // TODO: Replace with actual user ID from auth
-        const userId = 1;
+    const handleConfirmBooking = async () => {
+        let online = true;
+        try {
+            const dynamicImport: any = (Function('return import'))();
+            const mod: any = await dynamicImport('@react-native-community/' + 'netinfo');
+            const state = await mod.default.fetch();
+            online = Boolean(state.isConnected && state.isInternetReachable !== false);
+        } catch {}
+
+        if (!online) {
+            const req: PendingReservationRequest = {
+                showtimeId: parseInt(params.showtimeId),
+                numberOfSeats,
+                movieId: params.movieId,
+                movieTitle: params.movieTitle,
+                moviePhoto: params.moviePhoto,
+                hallName: params.hallName,
+                time: params.time,
+                date: new Date().toISOString().split('T')[0],
+                price: params.price,
+            };
+            try {
+                await enqueueReservationRequest(req);
+                Alert.alert('Mode hors ligne', 'Réservation ajoutée à la file d’attente');
+                router.back();
+            } catch (e: any) {
+                Alert.alert('Erreur', e?.message || 'Impossible d’ajouter à la file');
+            }
+            return;
+        }
 
         reservationMutation.mutate({
-            userId,
             showtimeId: parseInt(params.showtimeId),
             numberOfSeats,
         });

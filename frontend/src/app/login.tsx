@@ -1,20 +1,20 @@
-import { router } from "expo-router";
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    ImageBackground,
-    StyleSheet,
-    TextInput,
-    StatusBar,
-    Image,
-    Alert,
-} from "react-native";
-import { useFonts, Knewave_400Regular } from "@expo-google-fonts/knewave";
-import { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { loginUser } from "../service/api";
+import { Knewave_400Regular, useFonts } from "@expo-google-fonts/knewave";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+    Alert,
+    Image,
+    ImageBackground,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { loginUser } from "../service/api";
+import { useAuthStore } from "../store/auth";
 
 export default function Login() {
     const [fontsLoaded] = useFonts({
@@ -25,6 +25,7 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const setToken = useAuthStore((s: any) => s.setToken);
 
     if (!fontsLoaded) return null;
 
@@ -43,7 +44,7 @@ export default function Login() {
                 return;
             }
 
-            await AsyncStorage.setItem("@user_token", res.token);
+            await setToken(res.token);
 
             Alert.alert("Success", "Logged in successfully!");
             router.replace("/(tabs)/filmScreen");
