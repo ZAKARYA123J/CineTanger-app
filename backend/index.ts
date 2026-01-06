@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from "express";
 import authRouter from "./src/router/authRouter.js";
-import movieRouter from "./src/routes/movies.js";
-import reservationRouter from "./src/routes/reservations.js";
+import movieRouter from "./src/router/movies.js";
+import reservationRouter from "./src/router/reservations.js";
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
 import logger, { stream } from './src/config/logger.js';
 import morgan from 'morgan';
