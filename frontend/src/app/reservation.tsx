@@ -14,14 +14,14 @@ import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, router } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import { ReservationCard } from '../../components/reservation/ReservationCard';
+import { ReservationCard } from '../../components/ui/reservation/reservation/ReservationCard';
 import {
     getAllReservations,
     searchReservations,
     updateReservationStatus,
     Reservation,
-} from '../../service/reservationStorage';
-import { cancelReservation as cancelReservationAPI } from '../../service/api';
+} from '../service/reservationStorage';
+import { cancelReservation as cancelReservationAPI } from '../service/api';
 
 export default function ReservationsScreen() {
     const [reservations, setReservations] = useState<Reservation[]>([]);

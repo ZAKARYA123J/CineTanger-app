@@ -1,77 +1,89 @@
-import axios from "axios";
-import { API_URL } from "../constant/Url";
-import { logError, addBreadcrumb } from "../../utils/errorHandler";
+import axios from "axios"
+import { API_URL } from "../constant/Url"
+import storageToken from "./storageToken"
 
-// Add request interceptor
-axios.interceptors.request.use(
-    (config) => {
-        addBreadcrumb(`API Request: ${config.method?.toUpperCase()} ${config.url}`, 'api');
-        return config;
-    },
-    (error) => {
-        logError(error, { type: 'request_error' });
-        return Promise.reject(error);
-    }
-);
-
-// Add response interceptor
-axios.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        logError(error, {
-            type: 'api_error',
-            url: error.config?.url,
-            method: error.config?.method,
-            status: error.response?.status,
-            data: error.response?.data,
+export const registerUser = async (userData: { name: string; email: string; password: string }) => {
+    try {
+        const response = await axios.post(`${API_URL}/auth/register`, userData, {
+            headers: { "Content-Type": "application/json" },
         });
-        return Promise.reject(error);
+        return response.data;
+    } catch (error: any) {
+        console.error("Register error:", error);
+        throw error;
     }
-);
+};
 
-// Movie APIs
+export const loginUser = async (userData: { email: string; password: string }) => {
+    try {
+        const response = await axios.post(`${API_URL}/auth/login`, userData, {
+            headers: { "Content-Type": "application/json" },
+        });
+        console.log("Backend response:", response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error("Login error:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
 export const getMovie = async () => {
-    const movies = await axios.get(`${API_URL}/movies`);
-    return movies.data;
-}
+    try {
+        const response = await axios.get(`${API_URL}/movies`);
+        console.log("Movie response:", response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error("Get movies error:", error);
+        throw error;
+    }
+};
 
 export const getMovieById = async (id: number | string) => {
-    const movie = await axios.get(`${API_URL}/movies/${id}`);
-    return movie.data.data;
-}
-
-// Showtime & Reservation APIs
-export const getShowtimesByMovieId = async (movieId: number | string) => {
-    const response = await axios.get(`${API_URL}/showtimes`, {
-        params: { movieId }
-    });
-    return response.data;
-}
-
-export const checkSeatAvailability = async (showtimeId: number, numberOfSeats: number) => {
-    const response = await axios.post(`${API_URL}/showtimes/${showtimeId}/check-availability`, {
-        numberOfSeats
-    });
-    return response.data;
-}
+    try {
+        const response = await axios.get(`${API_URL}/movies/${id}`);
+        console.log("MovieById response:", response.data);
+        return response.data.data;
+    } catch (err) {
+        console.error("Error fetching movie by id:", err);
+        throw err;
+    }
+};
 
 export const createReservation = async (reservationData: {
-    userId: number;
     showtimeId: number;
     numberOfSeats: number;
 }) => {
-    const response = await axios.post(`${API_URL}/reservations`, reservationData);
-    return response.data;
-}
+    try {
+        const response = await storageToken.post(`/reservations/`, reservationData);
+        return response.data;
+    } catch (error: any) {
+        console.error("Create reservation error:", error);
+        throw error;
+    }
+};
 
-export const getReservationByCode = async (code: string) => {
-    const response = await axios.get(`${API_URL}/reservations/${code}`);
-    return response.data;
-}
+export const checkSeatAvailability = async (
+    showtimeId: number,
+    numberOfSeats: number
+) => {
+    try {
+        const response = await storageToken.post(`/reservations/check-availability`, {
+            showtimeId,
+            numberOfSeats,
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Check seat availability error:", error);
+        throw error;
+    }
+};
 
-export const cancelReservation = async (confirmationCode: string) => {
-    const response = await axios.delete(`${API_URL}/reservations/${confirmationCode}`);
-    return response.data;
-}
+export const getUserReservations: () => Promise<any> = async () => {
+    try {
+        const response = await storageToken.get(`/reservations/my-reservations`);
+        return response.data;
+    } catch (error: any) {
+        console.error("Get user reservations error:", error.response?.data || error.message);
+        throw error;
+    }
+};
