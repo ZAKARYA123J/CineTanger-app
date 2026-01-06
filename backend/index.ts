@@ -1,46 +1,50 @@
-import express, { type Request, type Response } from "express"
-import authRouter from "./src/router/authRouter.js"
-import "./app.js"
-import theaterRouter from "./src/router/theaterRouter.js";
-import showtimeRouter from "./src/router/showtimeRouter.js";
-import reservations from "./src/router/reservations.js";
-import movieRouter from "./src/router/movies.js"
+import express, { type Request, type Response } from "express";
+import authRouter from "./src/router/authRouter.js";
+import movieRouter from "./src/routes/movies.js";
+import reservationRouter from "./src/routes/reservations.js";
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
+import logger, { stream } from './src/config/logger.js';
+import morgan from 'morgan';
 
-export const app = express()
-app.use(express.json())
+const app = express();
 
+// Morgan HTTP request logger
+app.use(morgan('combined', { stream }));
 
-// Error handler (should be last)
-
-
+// Middleware - Body parser
 app.use(express.json());
-app.use("/api/auth", authRouter)
-app.use("/api/timers", showtimeRouter)
-app.use("/api/theaters", theaterRouter)
-app.use("/api/reservations", reservations)
-app.use("/api/movies", movieRouter)
-// Add this before your routes
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
-});
-app.use(notFound)
-app.use(errorHandler)
-// Add this after your routes to see if requests complete
-app.use((req, res, next) => {
-  res.on('finish', () => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${res.statusCode}`);
-  });
-  next();
-});
+
+// Routes
 app.get('/', (_req: Request, res: Response) => {
-    res.send("hello word")
-})
+    logger.info('Root endpoint accessed');
+    res.send("hello world");
+});
 
+app.use("/api/auth", authRouter);
+app.use("/api/movies", movieRouter);
+app.use("/api/reservations", reservationRouter);
 
-const PORT = 3000
+// 404 handler
+app.use(notFound);
+
+// Error handler
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`)
-})
+    logger.info(`Server running on http://localhost:${PORT}`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+    logger.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason: any) => {
+    logger.error('Unhandled Rejection:', reason);
+    process.exit(1);
+});
