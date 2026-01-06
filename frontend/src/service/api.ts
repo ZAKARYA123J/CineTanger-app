@@ -1,18 +1,48 @@
-import axios from "axios"
-import { API_URL } from "../constant/Url"
+import axios from "axios";
+import { API_URL } from "../constant/Url";
+import { logError, addBreadcrumb } from "../../utils/errorHandler";
 
+// Add request interceptor
+axios.interceptors.request.use(
+    (config) => {
+        addBreadcrumb(`API Request: ${config.method?.toUpperCase()} ${config.url}`, 'api');
+        return config;
+    },
+    (error) => {
+        logError(error, { type: 'request_error' });
+        return Promise.reject(error);
+    }
+);
+
+// Add response interceptor
+axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        logError(error, {
+            type: 'api_error',
+            url: error.config?.url,
+            method: error.config?.method,
+            status: error.response?.status,
+            data: error.response?.data,
+        });
+        return Promise.reject(error);
+    }
+);
+
+// Movie APIs
 export const getMovie = async () => {
-    const movies = await axios.get(`${API_URL}/movies`)
+    const movies = await axios.get(`${API_URL}/movies`);
     return movies.data;
 }
 
 export const getMovieById = async (id: number | string) => {
-    const movie = await axios.get(`${API_URL}/movies/${id}`)
-    return movie.data.data
+    const movie = await axios.get(`${API_URL}/movies/${id}`);
+    return movie.data.data;
 }
 
-// ===== NEW: Showtime & Reservation APIs =====
-
+// Showtime & Reservation APIs
 export const getShowtimesByMovieId = async (movieId: number | string) => {
     const response = await axios.get(`${API_URL}/showtimes`, {
         params: { movieId }

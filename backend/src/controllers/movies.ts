@@ -1,167 +1,112 @@
 import type { Request, Response } from 'express';
 import Movie from '../models/Movie.js';
+import { AppError, asyncHandler } from '../middlewares/errorHandler.js';
+import logger from '../config/logger.js';
 
-// Get all movies 
-export const getAllMovies = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const movies = await Movie.findAll({
-      order: [['createdAt', 'DESC']]
-    });
+// Get all movies
+export const getAllMovies = asyncHandler(async (req: Request, res: Response) => {
+    logger.info('Fetching all movies');
+    
+    const movies = await Movie.findAll();
+    
+    logger.info(`Found ${movies.length} movies`);
+    
     res.status(200).json({
-      success: true,
-      count: movies.length,
-      data: movies
+        success: true,
+        count: movies.length,
+        data: movies
     });
-  } catch (error) {
-    console.error('Error fetching movies:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching movies',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-};
+});
 
-// Get movie by id 
-export const getMovieById = async (req: Request, res: Response): Promise<void> => {
-  try {
+// Get movie by ID
+export const getMovieById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-
+    
+    logger.info(`Fetching movie with ID: ${id}`);
+    
     const movieData = await Movie.findByPk(id);
-
+    
     if (!movieData) {
-      res.status(404).json({
-        success: false,
-        message: `Movie with ID ${id} not found`
-      });
-      return;
+        logger.warn(`Movie not found with ID: ${id}`);
+        throw new AppError('Movie not found', 404);
     }
+    
+    logger.info(`Movie found: ${movieData.get('title')}`);
+    
     res.status(200).json({
-      success: true,
-      data: movieData
+        success: true,
+        data: movieData
     });
-  } catch (error) {
-    console.error('Error fetching movie:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching movie',
-      error: error instanceof Error ? error.message : 'Unknown error'
+});
+
+// Create movie
+export const createMovie = asyncHandler(async (req: Request, res: Response) => {
+    const { title, duration, genre, releaseDate, posterUrl } = req.body;
+    
+    logger.info('Creating new movie', { title, genre });
+    
+    const movieData = await Movie.create({
+        title,
+        duration,
+        genre,
+        releaseDate,
+        photo: posterUrl
     });
-  }
-};
-
-// Create a new movie
-export const createMovie = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const {
-      title,
-      duration,
-      genre,
-      releaseDate,
-      posterUrl,  // ← Changed from 'photo' to 'posterUrl'
-    } = req.body;
-
-    // Validation is now handled by express-validator middleware
-    const newMovie = await Movie.create({
-      
-      title,
-      photo: posterUrl || '',  // ← Map posterUrl to photo field
-      duration,
-      releaseDate,
-      genre
-    });
-
+    
+    logger.info(`Movie created successfully with ID: ${movieData.get('id')}`);
+    
     res.status(201).json({
-      success: true,
-      message: 'Movie created successfully',
-      data: newMovie
+        success: true,
+        message: 'Movie created successfully',
+        data: movieData
     });
-  } catch (error) {
-    console.error('Error creating movie:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while creating movie',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-};
+});
 
-
-// Update a movie 
-export const updateMovie = async (req: Request, res: Response): Promise<void> => {
-  try {
+// Update movie
+export const updateMovie = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const {
-      title,
-      duration,
-      genre,
-      releaseDate,
-      posterUrl
-    } = req.body;
-
-    const movieData = await Movie.findByPk(id) as any;
-
-    if (!movieData) {
-      res.status(404).json({
-        success: false,
-        message: `Movie with ID ${id} not found`
-      });
-      return;
-    }
-
-    // Update provided fields - validation handled by middleware
-    await movieData.update({
-      title: title || movieData.title,
-      duration: duration || movieData.duration,
-      genre: genre || movieData.genre,
-      releaseDate: releaseDate || movieData.releaseDate,
-      photo: posterUrl || movieData.photo
-    });
-
-
-    res.status(200).json({
-      success: true,
-      message: 'Movie updated successfully',
-      data: movieData
-    });
-  } catch (error) {
-    console.error('Error updating movie:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while updating movie',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-};
-
-// Delete a movie
-export const deleteMovie = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-
+    const updateData = req.body;
+    
+    logger.info(`Updating movie with ID: ${id}`, updateData);
+    
     const movieData = await Movie.findByPk(id);
-
+    
     if (!movieData) {
-      res.status(404).json({
-        success: false,
-        message: `Movie with ID ${id} not found`
-      });
-      return;
+        logger.warn(`Movie not found for update with ID: ${id}`);
+        throw new AppError('Movie not found', 404);
     }
-
-    await movieData.destroy();
-
+    
+    await movieData.update(updateData);
+    
+    logger.info(`Movie updated successfully: ${id}`);
+    
     res.status(200).json({
-      success: true,
-      message: 'Movie deleted successfully',
-      data: {}
+        success: true,
+        message: 'Movie updated successfully',
+        data: movieData
     });
-  } catch (error) {
-    console.error('Error deleting movie:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while deleting movie',
-      error: error instanceof Error ? error.message : 'Unknown error'
+});
+
+// Delete movie
+export const deleteMovie = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    
+    logger.info(`Deleting movie with ID: ${id}`);
+    
+    const movieData = await Movie.findByPk(id);
+    
+    if (!movieData) {
+        logger.warn(`Movie not found for deletion with ID: ${id}`);
+        throw new AppError('Movie not found', 404);
+    }
+    
+    await movieData.destroy();
+    
+    logger.info(`Movie deleted successfully: ${id}`);
+    
+    res.status(200).json({
+        success: true,
+        message: 'Movie deleted successfully',
+        data: {}
     });
-  }
-};
+});
