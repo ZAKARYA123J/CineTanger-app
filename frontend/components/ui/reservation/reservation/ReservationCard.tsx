@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 interface ReservationCardProps {
@@ -18,12 +18,14 @@ interface ReservationCardProps {
     };
     onPress?: () => void;
     onCancel?: () => void;
+    isLoading?: boolean;
 }
 
 export const ReservationCard: React.FC<ReservationCardProps> = ({
     reservation,
     onPress,
     onCancel,
+    isLoading = false,
 }) => {
     const getStatusColor = () => {
         switch (reservation.status) {
@@ -56,7 +58,6 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
             onPress={onPress}
             activeOpacity={0.7}
         >
-            {/* Movie Poster & Info */}
             <View style={styles.header}>
                 <Image
                     source={{ uri: reservation.moviePhoto }}
@@ -84,10 +85,8 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
                 </View>
             </View>
 
-            {/* Divider */}
             <View style={styles.divider} />
 
-            {/* Confirmation Code & Seats */}
             <View style={styles.footer}>
                 <View style={styles.codeSection}>
                     <Text style={styles.codeLabel}>Code</Text>
@@ -109,21 +108,29 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
                 </View>
             </View>
 
-            {/* Status Badge */}
             <View style={[styles.statusBadge, { backgroundColor: getStatusColor() }]}>
                 <Text style={styles.statusText}>{getStatusText()}</Text>
             </View>
 
-            {/* Cancel Button (only for active reservations) */}
             {reservation.status === 'active' && onCancel && (
                 <TouchableOpacity
-                    style={styles.cancelBtn}
+                    style={[
+                        styles.cancelBtn,
+                        isLoading && styles.cancelBtnLoading,
+                    ]}
                     onPress={(e) => {
                         e.stopPropagation();
-                        onCancel();
+                        if (!isLoading) {
+                            onCancel();
+                        }
                     }}
+                    disabled={isLoading}
                 >
-                    <Feather name="x-circle" size={20} color="#d41132" />
+                    {isLoading ? (
+                        <ActivityIndicator size="small" color="#d41132" />
+                    ) : (
+                        <Feather name="x-circle" size={20} color="#d41132" />
+                    )}
                 </TouchableOpacity>
             )}
         </TouchableOpacity>
@@ -248,5 +255,8 @@ const styles = StyleSheet.create({
         padding: 8,
         backgroundColor: '#2A2A2A',
         borderRadius: 20,
+    },
+    cancelBtnLoading: {
+        opacity: 0.6,
     },
 });
