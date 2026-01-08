@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API_URL } from "../constant/Url";
 import storageToken from "./storageToken";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const registerUser = async (userData: { name: string; email: string; password: string }) => {
     try {

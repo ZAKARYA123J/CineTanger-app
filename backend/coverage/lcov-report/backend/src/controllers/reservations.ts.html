@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">8.57% </span>
+                <span class="strong">14.5% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/140</span>
+                <span class='fraction'>19/131</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">8.57% </span>
+                <span class="strong">14.5% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/140</span>
+                <span class='fraction'>19/131</span>
             </div>
         
             
@@ -193,18 +193,9 @@
 <a name='L128'></a><a href='#L128'>128</a>
 <a name='L129'></a><a href='#L129'>129</a>
 <a name='L130'></a><a href='#L130'>130</a>
-<a name='L131'></a><a href='#L131'>131</a>
-<a name='L132'></a><a href='#L132'>132</a>
-<a name='L133'></a><a href='#L133'>133</a>
-<a name='L134'></a><a href='#L134'>134</a>
-<a name='L135'></a><a href='#L135'>135</a>
-<a name='L136'></a><a href='#L136'>136</a>
-<a name='L137'></a><a href='#L137'>137</a>
-<a name='L138'></a><a href='#L138'>138</a>
-<a name='L139'></a><a href='#L139'>139</a>
-<a name='L140'></a><a href='#L140'>140</a>
-<a name='L141'></a><a href='#L141'>141</a>
-<a name='L142'></a><a href='#L142'>142</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L131'></a><a href='#L131'>131</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -268,6 +259,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -287,14 +280,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -336,164 +323,144 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { Request, Response } from "express";
-import reservation from "../models/Reservation.js";
-import showtime from "../models/showtime.js";
-import { calculateAvailableSeats } from "../utils/seatsHelper.js";
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import type { Request, Response } from 'express';
+import Reservation from '../models/Reservation.js';
+import Showtime from '../models/showtime.js';
+import { AppError, asyncHandler } from '../middlewares/errorHandler.js';
+import { calculateAvailableSeats } from '../utils/seatsHelper.js';
 import { generateConfirmationCode } from '../utils/confirmationCodeGenerator.js';
+import logger from '../config/logger.js';
 &nbsp;
-//create a  new reservation 
-export const createReservation = <span class="fstat-no" title="function not covered" >async (req: Request, res: Response): Promise&lt;void&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const { showtimeId, numberOfSeats } = req.body;</span>
-<span class="cstat-no" title="statement not covered" >    const userId = req.user!.id;</span>
-<span class="cstat-no" title="statement not covered" >    //check if show time exists</span>
-<span class="cstat-no" title="statement not covered" >    const show = await showtime.findByPk(showtimeId);</span>
-<span class="cstat-no" title="statement not covered" >    if (!show) {</span>
-<span class="cstat-no" title="statement not covered" >      res.status(400).json({</span>
-<span class="cstat-no" title="statement not covered" >        success: false,</span>
-<span class="cstat-no" title="statement not covered" >        message: 'Showtime not found'</span>
-<span class="cstat-no" title="statement not covered" >      });</span>
-<span class="cstat-no" title="statement not covered" >      return;</span>
+// Create reservation
+export const createReservation = asyncHandler(async (req: Request, res: Response) =&gt; {
+<span class="cstat-no" title="statement not covered" >    const { userId, showtimeId, numberOfSeats } = req.body;</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info('Creating reservation', { userId, showtimeId, numberOfSeats });</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Get showtime</span>
+<span class="cstat-no" title="statement not covered" >    const showtime = await Showtime.findByPk(showtimeId);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (!showtime) {</span>
+<span class="cstat-no" title="statement not covered" >        logger.warn(`Showtime not found: ${showtimeId}`);</span>
+<span class="cstat-no" title="statement not covered" >        throw new AppError('Showtime not found', 404);</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    //check if enough seats are available</span>
-<span class="cstat-no" title="statement not covered" >    const availableSeats = await calculateAvailableSeats(showtimeId);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Check seat availability</span>
+<span class="cstat-no" title="statement not covered" >    const availableSeats = calculateAvailableSeats(showtime);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info(`Available seats for showtime ${showtimeId}: ${availableSeats}`);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    if (availableSeats &lt; numberOfSeats) {</span>
-<span class="cstat-no" title="statement not covered" >      res.status(400).json({</span>
-<span class="cstat-no" title="statement not covered" >        success: false,</span>
-<span class="cstat-no" title="statement not covered" >        message: `Not enough seats available. only ${availableSeats} seats remaining`</span>
-<span class="cstat-no" title="statement not covered" >      });</span>
-<span class="cstat-no" title="statement not covered" >      return;</span>
+<span class="cstat-no" title="statement not covered" >        logger.warn('Insufficient seats', { requested: numberOfSeats, available: availableSeats });</span>
+<span class="cstat-no" title="statement not covered" >        throw new AppError('Not enough seats available', 400);</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    //generate unique confirmation code</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Generate confirmation code</span>
 <span class="cstat-no" title="statement not covered" >    const confirmationCode = await generateConfirmationCode();</span>
-<span class="cstat-no" title="statement not covered" >    //calculate total price</span>
-<span class="cstat-no" title="statement not covered" >    const pricePerSeat = show.get('price') as number;</span>
-<span class="cstat-no" title="statement not covered" >    const totalPrice = pricePerSeat * numberOfSeats;</span>
-<span class="cstat-no" title="statement not covered" >    //create reservation</span>
-<span class="cstat-no" title="statement not covered" >    const newReservation = await reservation.create({</span>
-<span class="cstat-no" title="statement not covered" >      userId,</span>
-<span class="cstat-no" title="statement not covered" >      showtimeId,</span>
-<span class="cstat-no" title="statement not covered" >      numberOfSeats,</span>
-<span class="cstat-no" title="statement not covered" >      confirmationCode,</span>
-<span class="cstat-no" title="statement not covered" >      totalPrice</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Calculate total price</span>
+<span class="cstat-no" title="statement not covered" >    const totalPrice = showtime.get('price') as number * numberOfSeats;</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Create reservation</span>
+<span class="cstat-no" title="statement not covered" >    const reservation = await Reservation.create({</span>
+<span class="cstat-no" title="statement not covered" >        userId,</span>
+<span class="cstat-no" title="statement not covered" >        showtimeId,</span>
+<span class="cstat-no" title="statement not covered" >        numberOfSeats,</span>
+<span class="cstat-no" title="statement not covered" >        confirmationCode,</span>
+<span class="cstat-no" title="statement not covered" >        totalPrice</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >    //update booked seats in showtime </span>
-<span class="cstat-no" title="statement not covered" >    const currentBooked = show.get('bookedSeats') as number;</span>
-<span class="cstat-no" title="statement not covered" >    await show.update({</span>
-<span class="cstat-no" title="statement not covered" >      bookedSeats: currentBooked + numberOfSeats</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Update booked seats</span>
+<span class="cstat-no" title="statement not covered" >    const currentBookedSeats = showtime.get('bookedSeats') as number;</span>
+<span class="cstat-no" title="statement not covered" >    await showtime.update({</span>
+<span class="cstat-no" title="statement not covered" >        bookedSeats: currentBookedSeats + numberOfSeats</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info(`Reservation created successfully`, {</span>
+<span class="cstat-no" title="statement not covered" >        confirmationCode,</span>
+<span class="cstat-no" title="statement not covered" >        reservationId: reservation.get('id'),</span>
+<span class="cstat-no" title="statement not covered" >        totalPrice</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    res.status(201).json({</span>
-<span class="cstat-no" title="statement not covered" >      success: true,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Reservation created successfully',</span>
-<span class="cstat-no" title="statement not covered" >      data: newReservation</span>
+<span class="cstat-no" title="statement not covered" >        success: true,</span>
+<span class="cstat-no" title="statement not covered" >        message: 'Reservation created successfully',</span>
+<span class="cstat-no" title="statement not covered" >        data: reservation</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error('Error creating reservation:', error);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({</span>
-<span class="cstat-no" title="statement not covered" >      success: false,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Server error while creating reservation',</span>
-<span class="cstat-no" title="statement not covered" >      error: error instanceof Error ? error.message : 'Unknown error'</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >};</span>
-//get reservation by confirmation code 
-export const getReservationByCode = <span class="fstat-no" title="function not covered" >async (req: Request, res: Response): Promise&lt;void&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const { code } = req.params;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const reservationData = await reservation.findOne({</span>
-<span class="cstat-no" title="statement not covered" >      where: { confirmationCode: code }</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >    if (!reservationData) {</span>
-<span class="cstat-no" title="statement not covered" >      res.status(404).json({</span>
-<span class="cstat-no" title="statement not covered" >        success: false,</span>
-<span class="cstat-no" title="statement not covered" >        message: `Reservation with code ${code} not found`</span>
-<span class="cstat-no" title="statement not covered" >      });</span>
-<span class="cstat-no" title="statement not covered" >      return;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
-<span class="cstat-no" title="statement not covered" >      success: true,</span>
-<span class="cstat-no" title="statement not covered" >      data: reservationData</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error('Error fetching reservation:', error);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({</span>
-<span class="cstat-no" title="statement not covered" >      success: false,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Server error while fetching reservation',</span>
-<span class="cstat-no" title="statement not covered" >      error: error instanceof Error ? error.message : 'Unknown error'</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >};</span>
-//cancel reservation 
-export const cancelReservation = <span class="fstat-no" title="function not covered" >async (req: Request, res: Response): Promise&lt;void&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const { code } = req.params;</span>
-<span class="cstat-no" title="statement not covered" >    //find reservation </span>
-<span class="cstat-no" title="statement not covered" >    const reservationData = await reservation.findOne({</span>
-<span class="cstat-no" title="statement not covered" >      where: { confirmationCode: code }</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >    if (!reservationData) {</span>
-<span class="cstat-no" title="statement not covered" >      res.status(404).json({</span>
-<span class="cstat-no" title="statement not covered" >        success: false,</span>
-<span class="cstat-no" title="statement not covered" >        message: `Reservation with code ${code} not found`</span>
-<span class="cstat-no" title="statement not covered" >      });</span>
-<span class="cstat-no" title="statement not covered" >      return;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    if (!reservationData) {</span>
-<span class="cstat-no" title="statement not covered" >      res.status(404).json({</span>
-<span class="cstat-no" title="statement not covered" >        success: false,</span>
-<span class="cstat-no" title="statement not covered" >        message: `Reservation with code ${code} not found`</span>
-<span class="cstat-no" title="statement not covered" >      });</span>
-<span class="cstat-no" title="statement not covered" >      return;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    const showtimeId = reservationData.get('showtimeId') as number;</span>
-<span class="cstat-no" title="statement not covered" >    const numberOfSeats = reservationData.get('numberOfSeats') as number;</span>
-<span class="cstat-no" title="statement not covered" >    //Release seats back to showtime</span>
-<span class="cstat-no" title="statement not covered" >    const show = await showtime.findByPk(showtimeId);</span>
-<span class="cstat-no" title="statement not covered" >    if (show) {</span>
-<span class="cstat-no" title="statement not covered" >      const currentBooked = show.get('bookedSeats') as number;</span>
-<span class="cstat-no" title="statement not covered" >      await show.update({</span>
-<span class="cstat-no" title="statement not covered" >        bookedSeats: Math.max(0, currentBooked - numberOfSeats)</span>
-<span class="cstat-no" title="statement not covered" >      });</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    //delete reservation</span>
-<span class="cstat-no" title="statement not covered" >    await reservationData.destroy();</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
-<span class="cstat-no" title="statement not covered" >      success: true,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Reservation cancelled successfully',</span>
-<span class="cstat-no" title="statement not covered" >      data: {}</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error('Error cancelling reservation:', error);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({</span>
-<span class="cstat-no" title="statement not covered" >      success: false,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Server error while cancelling reservation',</span>
-<span class="cstat-no" title="statement not covered" >      error: error instanceof Error ? error.message : 'Unknown error'</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+});
 &nbsp;
-&nbsp;</pre></td></tr></table></pre>
+// Get reservation by confirmation code
+export const getReservationByCode = asyncHandler(async (req: Request, res: Response) =&gt; {
+<span class="cstat-no" title="statement not covered" >    const { code } = req.params;</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info(`Fetching reservation with code: ${code}`);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    const reservation = await Reservation.findOne({</span>
+<span class="cstat-no" title="statement not covered" >        where: { confirmationCode: code }</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (!reservation) {</span>
+<span class="cstat-no" title="statement not covered" >        logger.warn(`Reservation not found with code: ${code}`);</span>
+<span class="cstat-no" title="statement not covered" >        throw new AppError('Reservation not found', 404);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info(`Reservation found: ${code}`);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
+<span class="cstat-no" title="statement not covered" >        success: true,</span>
+<span class="cstat-no" title="statement not covered" >        data: reservation</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+});
+&nbsp;
+// Cancel reservation
+export const cancelReservation = asyncHandler(async (req: Request, res: Response) =&gt; {
+<span class="cstat-no" title="statement not covered" >    const { code } = req.params;</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info(`Cancelling reservation with code: ${code}`);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Find reservation</span>
+<span class="cstat-no" title="statement not covered" >    const reservation = await Reservation.findOne({</span>
+<span class="cstat-no" title="statement not covered" >        where: { confirmationCode: code }</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (!reservation) {</span>
+<span class="cstat-no" title="statement not covered" >        logger.warn(`Reservation not found for cancellation: ${code}`);</span>
+<span class="cstat-no" title="statement not covered" >        throw new AppError('Reservation not found', 404);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Get showtime to release seats</span>
+<span class="cstat-no" title="statement not covered" >    const showtimeId = reservation.get('showtimeId') as number;</span>
+<span class="cstat-no" title="statement not covered" >    const numberOfSeats = reservation.get('numberOfSeats') as number;</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    const showtime = await Showtime.findByPk(showtimeId);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (showtime) {</span>
+<span class="cstat-no" title="statement not covered" >        const currentBookedSeats = showtime.get('bookedSeats') as number;</span>
+<span class="cstat-no" title="statement not covered" >        await showtime.update({</span>
+<span class="cstat-no" title="statement not covered" >            bookedSeats: Math.max(0, currentBookedSeats - numberOfSeats)</span>
+<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >        </span>
+<span class="cstat-no" title="statement not covered" >        logger.info(`Released ${numberOfSeats} seats for showtime ${showtimeId}`);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Delete reservation</span>
+<span class="cstat-no" title="statement not covered" >    await reservation.destroy();</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    logger.info(`Reservation cancelled successfully: ${code}`);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
+<span class="cstat-no" title="statement not covered" >        success: true,</span>
+<span class="cstat-no" title="statement not covered" >        message: 'Reservation cancelled successfully',</span>
+<span class="cstat-no" title="statement not covered" >        data: {}</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+});</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-31T20:40:28.092Z
+                at 2026-01-07T13:40:22.240Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for backend/src/models/showtime.ts</title>
+    <title>Code coverage report for backend/src/config/logger.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">backend/src/models</a> showtime.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">backend/src/config</a> logger.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>47/47</span>
+                <span class='fraction'>65/65</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>47/47</span>
+                <span class='fraction'>65/65</span>
             </div>
         
             
@@ -109,7 +109,46 @@
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -148,60 +187,75 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { sequelize } from "../config/Database.js";
-import { DataType, DataTypes } from "sequelize";
-import theater from "./theater.js";
-import movie from "./Movie.js";
-const showtime = sequelize.define("Showtime", {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import winston from 'winston';
+import path from 'path';
+&nbsp;
+// Define log format
+const logFormat = winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
+);
+&nbsp;
+// Console format for development
+const consoleFormat = winston.format.combine(
+    winston.format.colorize(),
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.printf(({ timestamp, level, message, ...meta }) =&gt; {
+        let msg = `${timestamp} [${level}]: ${message}`;
+        if (Object.keys(meta).length &gt; 0) {
+            msg += ` ${JSON.stringify(meta)}`;
+        }
+        return msg;
+    })
+);
+&nbsp;
+// Create logs directory path
+const logsDir = path.join(process.cwd(), 'logs');
+// Create the logger
+const logger = winston.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: logFormat,
+    defaultMeta: { service: 'cinetanger-api' },
+    transports: [
+      // Write all logs to combined.log
+        new winston.transports.File({
+            filename: path.join(logsDir, 'combined.log'),
+            maxsize: 5242880, // 5MB
+            maxFiles: 5,
+        }),
+        // Write errors to error.log
+        new winston.transports.File({
+            filename: path.join(logsDir, 'error.log'),
+            level: 'error',
+            maxsize: 5242880, // 5MB
+            maxFiles: 5,
+        }),
+    ],
+});
+&nbsp;
+// Add console transport for development
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(
+        new winston.transports.Console({
+            format: consoleFormat,
+        })
+    );
+}
+&nbsp;
+// Create a stream object for Morgan
+export const stream = {
+    write: (message: string) =&gt; {
+        logger.info(message.trim());
     },
-    startTime: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    price: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    totalSeats: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    bookedSeats: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-      MovieId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: 'movies', // 改为小写复数，与 Movie 模型中的 tableName 一致
-      key: 'id'
-    }
-  },
-  theaterId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: 'Theater', // 同样改为小写复数
-      key: 'id'
-    }
-  },
-}, {
-    tableName: "showtimes",
-    timestamps: true
-})
-showtime.belongsTo(movie, { foreignKey: "MovieId" });
-showtime.belongsTo(theater, { foreignKey: "theaterId" });
-export default showtime;</pre></td></tr></table></pre>
+};
+&nbsp;
+export default logger;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

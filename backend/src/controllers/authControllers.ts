@@ -47,7 +47,7 @@ export const login = async (req: Request, res: Response) => {
         }
 
         const token = jwt.sign(
-            { id: login.getDataValue("id"), email: login.getDataValue("email"), name: login.getDataValue("name") },
+            { id: login.getDataValue("id"), email: login.getDataValue("email") },
             JWT_TOKEN,
             { expiresIn: "7d" }
         );

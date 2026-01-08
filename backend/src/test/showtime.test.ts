@@ -5,8 +5,8 @@ describe("Showtime api test integration",()=>{
       let server:any
       let app:any
     beforeAll(async()=>{
-      const imported=import("../../app.js")
-      app=imported
+      const imported=await import("../../index.js")
+      app=imported.default
       await sequelize.authenticate()
       await sequelize.sync({alter:true})
  
@@ -28,7 +28,7 @@ sequelize.close()
   jest.clearAllTimers()
    }
     },3000)
-    describe("POST should create showtime",async()=>{
+    describe("POST should create showtime",()=>{
     it("Should create showtime",async()=>{
        const response= (await request(app).post("/api/showtimes").send({
         

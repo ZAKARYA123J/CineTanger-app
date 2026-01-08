@@ -5,7 +5,7 @@ import reservationRouter from "./src/router/reservations.js";
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
 import logger, { stream } from './src/config/logger.js';
 import morgan from 'morgan';
-
+import "./app.js"
 const app = express();
 
 // Morgan HTTP request logger
@@ -32,10 +32,15 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    logger.info(`Server running on http://localhost:${PORT}`);
-    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    syncDatabase().then(() => {
+        app.listen(PORT, () => {
+            logger.info(`Server running on http://localhost:${PORT}`);
+            logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        });
+    });
+}
+
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error: Error) => {
@@ -48,3 +53,4 @@ process.on('unhandledRejection', (reason: any) => {
     logger.error('Unhandled Rejection:', reason);
     process.exit(1);
 });
+export default app;

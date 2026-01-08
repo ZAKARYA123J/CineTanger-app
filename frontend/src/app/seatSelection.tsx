@@ -1,18 +1,18 @@
-import { Feather } from '@expo/vector-icons';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
     View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+    Alert,
+    ActivityIndicator,
 } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { checkSeatAvailability, createReservation } from '../service/api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createReservation, checkSeatAvailability } from '../service/api';
 import { enqueueReservationRequest, PendingReservationRequest } from '../service/reservationStorage';
 
 export default function SeatSelectionScreen() {

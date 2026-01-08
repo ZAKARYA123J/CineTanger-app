@@ -3,48 +3,43 @@ import { sequelize } from "../config/Database.js";
 import request from "supertest";
 
 describe("Movies api integration Test", () => {
-  let app:any; // This will store your Express app
-  let server:any; // For the HTTP server
+  let app:any
+  let server:any; 
   
   beforeAll(async () => {
-    // ⬇️ REMOVE THE "const" - it creates a new local variable
+
     const imported = await import("../../index.js");
-    app = imported.app || imported; // Handle different export styles
+    app = imported.default; 
     
-    console.log('App loaded:', !!app); // Debug log
+    console.log('App loaded:', !!app); 
     
-    // If your index.js starts the server, you might need to not start it for tests
-    // Or if it does start automatically, get the app before it listens
+
     
     await sequelize.authenticate();
     await sequelize.sync({ force: true });
   }, 30000);
   
   afterAll(async () => {
-    // 1. Close server first
+    
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
     
-    // 2. Clean database
+ 
     await sequelize.query('TRUNCATE TABLE movies CASCADE;');
     
-    // 3. Wait for all promises
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // 4. Close sequelize with proper check
     if (sequelize && typeof sequelize.close === 'function') {
       try {
         await sequelize.close();
       } catch (error) {
-        // Ignore already closed errors
         if (!error.message.includes('already closed')) {
           console.error('Error closing sequelize:', error.message);
         }
       }
     }
     
-    // 5. Clear any remaining timeouts/intervals
     jest.clearAllTimers();
   }, 30000);
   

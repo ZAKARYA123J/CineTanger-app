@@ -8,22 +8,6 @@ const showtime = sequelize.define("Showtime", {
         primaryKey: true,
         autoIncrement: true
     },
-    MovieId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: "Movie",
-            key: "id"
-        }
-    },
-    theaterId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: "Theater",
-            key: "id"
-        }
-    },
     startTime: {
         type: DataTypes.DATE,
         allowNull: false
@@ -40,6 +24,20 @@ const showtime = sequelize.define("Showtime", {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+      MovieId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'movies', // 改为小写复数，与 Movie 模型中的 tableName 一致
+      key: 'id'
+    }
+  },
+  theaterId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'Theater', // 同样改为小写复数
+      key: 'id'
+    }
+  },
 }, {
     tableName: "showtimes",
     timestamps: true

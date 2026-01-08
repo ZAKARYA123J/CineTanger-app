@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.6% </span>
+                <span class="strong">76.78% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>38/46</span>
+                <span class='fraction'>43/56</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.6% </span>
+                <span class="strong">76.78% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>38/46</span>
+                <span class='fraction'>43/56</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -108,13 +108,17 @@
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -139,10 +143,25 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -151,61 +170,72 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import express, { type Request, type Response } from "express"
-import authRouter from "./src/router/authRouter.js"
-import "./app.js"
-import theaterRouter from "./src/router/theaterRouter.js";
-import showtimeRouter from "./src/router/showtimeRouter.js";
-import reservations from "./src/router/reservations.js";
-import movieRouter from "./src/router/movies.js"
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import express, { type Request, type Response } from "express";
+import authRouter from "./src/router/authRouter.js";
+import movieRouter from "./src/router/movies.js";
+import reservationRouter from "./src/router/reservations.js";
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
+import logger, { stream } from './src/config/logger.js';
+import morgan from 'morgan';
+import "./app.js"
+const app = express();
 &nbsp;
-export const app = express()
-app.use(express.json())
+// Morgan HTTP request logger
+app.use(morgan('combined', { stream }));
 &nbsp;
-&nbsp;
-// Error handler (should be last)
-&nbsp;
-&nbsp;
+// Middleware - Body parser
 app.use(express.json());
-app.use("/api/auth", authRouter)
-app.use("/api/timers", showtimeRouter)
-app.use("/api/theaters", theaterRouter)
-app.use("/api/reservations", reservations)
-app.use("/api/movies", movieRouter)
-// Add this before your routes
-app.use((req, res, next) =&gt; {
-<span class="cstat-no" title="statement not covered" >  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);</span>
-<span class="cstat-no" title="statement not covered" >  next();</span>
-});
-app.use(notFound)
-app.use(errorHandler)
-// Add this after your routes to see if requests complete
-app.use((req, res, next) =&gt; {
-<span class="cstat-no" title="statement not covered" >  res.on('finish', () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${res.statusCode}`);</span>
-<span class="cstat-no" title="statement not covered" >  });</span>
-<span class="cstat-no" title="statement not covered" >  next();</span>
-});
+&nbsp;
+// Routes
 app.get('/', (_req: Request, res: Response) =&gt; {
-<span class="cstat-no" title="statement not covered" >    res.send("hello word")</span>
-<span class="cstat-no" title="statement not covered" >})</span>
+<span class="cstat-no" title="statement not covered" >    logger.info('Root endpoint accessed');</span>
+<span class="cstat-no" title="statement not covered" >    res.send("hello world");</span>
+});
+&nbsp;
+app.use("/api/auth", authRouter);
+app.use("/api/movies", movieRouter);
+app.use("/api/reservations", reservationRouter);
+&nbsp;
+// 404 handler
+app.use(notFound);
+&nbsp;
+// Error handler
+app.use(errorHandler);
+&nbsp;
+const PORT = process.env.PORT || 3000;
+&nbsp;
+if (process.env.NODE_ENV !== 'test') <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    syncDatabase().then(() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        app.listen(PORT, () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            logger.info(`Server running on http://localhost:${PORT}`);</span>
+<span class="cstat-no" title="statement not covered" >            logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);</span>
+<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >}</span>
 &nbsp;
 &nbsp;
-const PORT = 3000
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) =&gt; {
+<span class="cstat-no" title="statement not covered" >    logger.error('Uncaught Exception:', error);</span>
+<span class="cstat-no" title="statement not covered" >    process.exit(1);</span>
+});
 &nbsp;
-app.listen(PORT, () =&gt; {
-    console.log(`Server running on http://localhost:${PORT}`)
-})</pre></td></tr></table></pre>
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason: any) =&gt; {
+<span class="cstat-no" title="statement not covered" >    logger.error('Unhandled Rejection:', reason);</span>
+<span class="cstat-no" title="statement not covered" >    process.exit(1);</span>
+});
+export default app;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-31T20:40:28.092Z
+                at 2026-01-07T13:40:22.240Z
             </div>
         <script src="../prettify.js"></script>
         <script>

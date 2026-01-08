@@ -10,7 +10,7 @@ const reservation = sequelize.define("Reservation", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "User",
+            model: "users",
             key: "id"
         }
     },
@@ -18,7 +18,7 @@ const reservation = sequelize.define("Reservation", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "Showtime",
+            model: "showtimes",
             key: "id"
         }
     },

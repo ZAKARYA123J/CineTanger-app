@@ -8,8 +8,8 @@ import {
   deleteMovie
 } from '../controllers/movies.js';
 import Movie from '../models/Movie.js';
+import { nextTick } from 'node:process';
 
-// Mock the Movie model
 jest.mock('../models/Movie');
 
 describe('Movie Controller', () => {
